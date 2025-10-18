@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - KLU Lost & Found Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <style>
+        .auth-container {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://www.kluniversity.in/images/slider/1.jpg') no-repeat center center/cover;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+            gap: 20px;
+        }
+        
+        .auth-container::before {
+            content: 'KLU - Lost & Found Portal';
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 3rem;
+            font-weight: bold;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .auth-card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            width: 100%;
+            max-width: 440px;
+            padding: 28px;
+            backdrop-filter: blur(8px);
+        }
+        
+        .auth-card h2 {
+            color: #1a365d;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        
+        .btn-primary {
+            background-color: #1a365d;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            margin-top: 10px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2c5282;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #4a5568;
+        }
+        
+        .auth-footer a {
+            color: #1a365d;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .klu-logo {
+            width: 120px;
+            margin: 0 auto 16px;
+            display: block;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+        
+        .input-with-icon input {
+            padding-left: 40px !important;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.2s ease;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.1);
+        }
+        
+        .password-strength-meter {
+            height: 5px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .strength-meter-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .password-strength-text {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        
+        .password-requirements {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .password-requirements li {
+            margin-bottom: 4px;
+            list-style-type: none;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .password-requirements li:before {
+            content: '✗';
+            color: #dc3545;
+            position: absolute;
+            left: -20px;
+        }
+        
+        .password-requirements li.valid {
+            color: #28a745;
+        }
+        
+        .password-requirements li.valid:before {
+            content: '✓';
+            color: #28a745;
+        }
+        
+        .password-match {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 480px) {
+            .auth-card { padding: 22px; border-radius: 12px; }
+        }
+        
+        .match {
+            color: #28a745;
+        }
+        
+        .no-match {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <img src="https://www.kluniversity.in/images/logo.png" alt="KLU Logo" class="klu-logo">
+            <h2>Create Account</h2>
+            <p class="subtitle">Join KLU Lost & Found Portal</p>
+            
+            <form id="registerForm" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">KLU Email</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div id="emailError" style="color: #dc3545; display: none; font-size: 0.8rem; margin-top: 5px;">
+                        Please use your KLU email address (@klu.ac.in)
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" required onkeyup="checkPasswordStrength()">
+                    </div>
+                    <div class="password-strength-meter">
+                        <div id="passwordStrength" class="strength-meter-fill"></div>
+                    </div>
+                    <div id="passwordStrengthText" class="password-strength-text"></div>
+                    
+                    <ul class="password-requirements">
+                        <li id="length">At least 8 characters</li>
+                        <li id="uppercase">At least one uppercase letter</li>
+                        <li id="lowercase">At least one lowercase letter</li>
+                        <li id="number">At least one number</li>
+                        <li id="special">At least one special character</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required onkeyup="checkPasswordMatch()">
+                    </div>
+                    <div id="passwordMatch" class="password-match"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                
+                <div class="auth-footer">
+                    Already have an account? <a href="login.html">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+    <script>
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthMeter = document.getElementById('passwordStrength');
+            const strengthText = document.getElementById('passwordStrengthText');
+            let strength = 0;
+            let messages = [];
+            
+            // Check password requirements
+            const hasMinLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            
+            // Update requirement indicators
+            document.getElementById('length').classList.toggle('valid', hasMinLength);
+            document.getElementById('uppercase').classList.toggle('valid', hasUppercase);
+            document.getElementById('lowercase').classList.toggle('valid', hasLowercase);
+            document.getElementById('number').classList.toggle('valid', hasNumber);
+            document.getElementById('special').classList.toggle('valid', hasSpecial);
+            
+            // Calculate strength
+            if (hasMinLength) strength += 1;
+            if (hasUppercase) strength += 1;
+            if (hasLowercase) strength += 1;
+            if (hasNumber) strength += 1;
+            if (hasSpecial) strength += 1;
+            
+            // Update strength meter
+            const strengthPercent = (strength / 5) * 100;
+            strengthMeter.style.width = strengthPercent + '%';
+            
+            // Set color and text based on strength
+            if (password.length === 0) {
+                strengthMeter.style.backgroundColor = 'transparent';
+                strengthText.textContent = '';
+                strengthText.className = 'password-strength-text';
+            } else if (strength <= 2) {
+                strengthMeter.style.backgroundColor = '#dc3545';
+                strengthText.textContent = 'Weak';
+                strengthText.className = 'password-strength-text text-danger';
+            } else if (strength <= 4) {
+                strengthMeter.style.backgroundColor = '#ffc107';
+                strengthText.textContent = 'Moderate';
+                strengthText.className = 'password-strength-text text-warning';
+            } else {
+                strengthMeter.style.backgroundColor = '#28a745';
+                strengthText.textContent = 'Strong';
+                strengthText.className = 'password-strength-text text-success';
+            }
+            
+            // Check password match if confirm password is not empty
+            if (document.getElementById('confirmPassword').value !== '') {
+                checkPasswordMatch();
+            }
+        }
+        
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const matchText = document.getElementById('passwordMatch');
+            
+            if (confirmPassword === '') {
+                matchText.textContent = '';
+                matchText.className = 'password-match';
+            } else if (password === confirmPassword) {
+                matchText.textContent = 'Passwords match';
+                matchText.className = 'password-match match';
+            } else {
+                matchText.textContent = 'Passwords do not match';
+                matchText.className = 'password-match no-match';
+            }
+        }
+        
+        function validateForm() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (!email.endsWith('@klu.ac.in')) {
+                document.getElementById('emailError').style.display = 'block';
+                return false;
+            }
+            if (!fullName || !email || !phone || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return false;
+            }
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            if (password.length < 8 || !hasUppercase || !hasLowercase || !hasNumber || !hasSpecial) {
+                alert('Password must be 8+ chars with upper, lower, number, special');
+                return false;
+            }
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(u => u.email === email)) {
+                alert('An account with this email already exists');
+                return false;
+            }
+            const newUser = { id: 'user-' + Date.now(), name: fullName, email, phone, password, createdAt: new Date().toISOString() };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Registration successful! You can now log in.');
+            window.location.href = 'login.html';
+            return false;
+        }
+        
+        // Remove error message when user starts typing in email
+        document.getElementById('email').addEventListener('input', function() {
+            if (this.value.endsWith('@klu.ac.in')) {
+                document.getElementById('emailError').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

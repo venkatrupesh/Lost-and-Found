@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message | Admin Dashboard</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #343a40, #212529);
+            color: white;
+            padding: 80px 0 40px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .admin-header p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .admin-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .admin-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+        }
+        
+        .admin-sidebar h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .admin-nav-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .admin-nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .admin-content {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+        
+        .admin-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .message-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .type-option input[type="radio"] {
+            display: none;
+        }
+
+        .type-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .type-option label i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .type-option input[type="radio"]:checked + label {
+            border-color: #4299e1;
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .type-option input[type="radio"]:checked + label i {
+            color: #2b6cb0;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="../../index.html" class="logo">
+                <i class="fas fa-search-location"></i>
+                <span>Lost & Found</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../items/browse.html">Browse Items</a>
+                <a href="../items/report-lost.html">Report Lost</a>
+                <a href="../items/report-found.html">Report Found</a>
+                <a href="../dashboard/index.html" class="dashboard-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <div class="auth-links">
+                    <a href="../auth/login.html" class="btn btn-outline">Login</a>
+                    <a href="../auth/register.html" class="btn btn-primary">Register</a>
+                </div>
+                <div class="user-menu" style="display: none;">
+                    <a href="#" id="logoutBtn" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+            <button class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <h1><i class="fas fa-paper-plane"></i> Send Message to Users</h1>
+            <p>Create and send important messages to users about lost and found items.</p>
+        </div>
+    </header>
+
+    <!-- Admin Content -->
+    <main class="container">
+        <div class="admin-container">
+            <div class="admin-sidebar">
+                <h2>Admin Dashboard</h2>
+                <nav class="admin-nav">
+                    <a href="index.html" class="admin-nav-item">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="messages.html" class="admin-nav-item">
+                        <i class="fas fa-envelope"></i> Messages
+                    </a>
+                    <a href="send-message.html" class="admin-nav-item active">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </a>
+                    <a href="users.html" class="admin-nav-item">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                    <a href="items.html" class="admin-nav-item">
+                        <i class="fas fa-box-open"></i> Items
+                    </a>
+                    <a href="reports.html" class="admin-nav-item">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a>
+                    <a href="settings.html" class="admin-nav-item">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <a href="../../index.html" class="admin-nav-item">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                </nav>
+            </div>
+
+            <div class="admin-content">
+                <h2><i class="fas fa-paper-plane"></i> Send New Message</h2>
+                
+                <form id="messageForm" class="message-form">
+                    <!-- Message Type -->
+                    <div class="form-group">
+                        <label>Message Type <span class="required">*</span></label>
+                        <div class="type-selector">
+                            <div class="type-option">
+                                <input type="radio" id="type-announcement" name="messageType" value="announcement" checked>
+                                <label for="type-announcement">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <span>Announcement</span>
+                                </label>
+                            </div>
+                            <div class="type-option">
+                                <input type="radio" id="type-lost" name="messageType" value="lost">
+                                <label for="type-lost">
+                                    <i class="fas fa-search"></i>
+                                    <span>Lost Item</span>
+                                </label>
+                            </div>
+                            <div class="type-option">
+                                <input type="radio" id="type-found" name="messageType" value="found">
+                                <label for="type-found">
+                                    <i class="fas fa-box"></i>
+                                    <span>Found Item</span>
+                                </label>
+                            </div>
+                            <div class="type-option">
+                                <input type="radio" id="type-info" name="messageType" value="info">
+                                <label for="type-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Information</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message Details -->
+                    <div class="form-group">
+                        <label for="messageTitle">Title <span class="required">*</span></label>
+                        <input type="text" id="messageTitle" required 
+                               placeholder="Enter a clear and descriptive title"
+                               maxlength="100">
+                        <div class="char-count"><span id="titleCount">0</span>/100 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="messageContent">Message Content <span class="required">*</span></label>
+                        <textarea id="messageContent" required 
+                                 placeholder="Enter your message here. Be clear and specific about the details."
+                                 rows="6" maxlength="2000"></textarea>
+                        <div class="char-count"><span id="contentCount">0</span>/2000 characters</div>
+                    </div>
+
+                    <!-- Recipient Selection -->
+                    <div class="form-group">
+                        <label>Recipients <span class="required">*</span></label>
+                        <div class="recipient-selection">
+                            <div class="checkbox-group">
+                                <input type="radio" id="recipient-all" name="recipientType" value="all" checked>
+                                <label for="recipient-all">All Users</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" id="recipient-lost" name="recipientType" value="lost">
+                                <label for="recipient-lost">Users with Lost Items</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" id="recipient-found" name="recipientType" value="found">
+                                <label for="recipient-found">Users who Found Items</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message Options -->
+                    <div class="form-group">
+                        <label>Message Options</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isImportant" checked>
+                            <label for="isImportant">Mark as Important</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="pinToTop" checked>
+                            <label for="pinToTop">Pin to Top</label>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" id="previewBtn" class="btn btn-secondary">
+                            <i class="far fa-eye"></i> Preview
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Preview Section -->
+                <div id="previewSection" style="display: none;">
+                    <h3>Message Preview</h3>
+                    <div id="messagePreview" class="message-card">
+                        <!-- Preview content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-search-location"></i> Lost & Found
+                </div>
+                <p>Helping you find what's lost and return what's found.</p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../items/browse.html">Browse Items</a></li>
+                        <li><a href="../items/report-lost.html">Report Lost</a></li>
+                        <li><a href="../items/report-found.html">Report Found</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2023 Lost & Found Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="../../js/main.js"></script>
+    <script src="../../js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageForm = document.getElementById('messageForm');
+            const previewBtn = document.getElementById('previewBtn');
+            const previewSection = document.getElementById('previewSection');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageContent = document.getElementById('messageContent');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewContent = document.getElementById('previewContent');
+            const charCount = document.getElementById('charCount');
+            const maxLength = 500;
+
+            // Update character count
+            messageContent.addEventListener('input', function() {
+                const remaining = maxLength - this.value.length;
+                charCount.textContent = `${remaining} characters remaining`;
+                if (remaining < 0) {
+                    this.value = this.value.substring(0, maxLength);
+                    charCount.textContent = '0 characters remaining';
+                }
+            });
+
+            // Preview message
+            previewBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                previewTitle.textContent = messageTitle.value || 'No title';
+                previewContent.textContent = messageContent.value || 'No content';
+                previewSection.style.display = 'block';
+                previewSection.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Handle form submission
+            messageForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const messageData = {
+                    title: messageTitle.value.trim(),
+                    content: messageContent.value.trim(),
+                    timestamp: new Date().toISOString(),
+                    isRead: false
+                };
+
+                try {
+                    const response = await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(messageData)
+                    });
+
+                    if (response.ok) {
+                        alert('Message sent successfully!');
+                        messageForm.reset();
+                        previewSection.style.display = 'none';
+                    } else {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Failed to send message');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Error: ${error.message}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

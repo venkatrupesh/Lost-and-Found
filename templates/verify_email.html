@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Email Verification{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>🔐 Email Verification Required</h2>
+        <p>Only authorized @klu.ac.in and @gmail.com email addresses are allowed to access this system.</p>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="email">Enter your Email Address:</label>
+                <input type="email" id="email" name="email" required 
+                       placeholder="yourname@klu.ac.in or yourname@gmail.com"
+                       pattern=".*@(klu\.ac\.in|gmail\.com)$"
+                       title="Only @klu.ac.in and @gmail.com emails are allowed">
+                <small>Only @klu.ac.in and @gmail.com email addresses are accepted</small>
+            </div>
+            
+            <button type="submit" class="btn">Send Verification Code</button>
+        </form>
+        
+        <div class="info-box">
+            <h4>📋 Requirements:</h4>
+            <ul>
+                <li>✅ Must use @klu.ac.in or @gmail.com email address</li>
+                <li>✅ Gmail accounts must be real Google accounts</li>
+                <li>✅ Mobile number must be 10 digits (6-9 starting)</li>
+                <li>✅ All information will be verified</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+.info-box {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.info-box ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.info-box li {
+    margin: 5px 0;
+    color: #28a745;
+}
+
+input[type="email"] {
+    text-transform: lowercase;
+}
+
+small {
+    color: #6c757d;
+    font-size: 12px;
+}
+</style>
+{% endblock %}

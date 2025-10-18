@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Messages | Lost & Found Portal</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #343a40, #212529);
+            color: white;
+            padding: 80px 0 40px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .admin-header p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .admin-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .admin-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+        }
+        
+        .admin-sidebar h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .admin-nav-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .admin-nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .admin-content {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+        
+        .admin-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .message-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .messages-list {
+            margin-top: 30px;
+        }
+        
+        .message-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .message-card .message-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .message-type.announcement {
+            background-color: #007bff;
+        }
+        
+        .message-type.lost {
+            background-color: #dc3545;
+        }
+        
+        .message-type.found {
+            background-color: #28a745;
+        }
+        
+        .message-type.info {
+            background-color: #17a2b8;
+        }
+        
+        .message-card h3 {
+            margin: 0 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        .message-card p {
+            margin: 0 0 10px;
+            color: #495057;
+        }
+        
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            transition: var(--transition);
+        }
+        
+        .message-actions button:hover {
+            color: var(--primary-color);
+        }
+        
+        .message-actions button.delete:hover {
+            color: #dc3545;
+        }
+        
+        .no-messages {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        
+        .no-messages i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Form Styles */
+        .admin-form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        /* Type Selector */
+        .type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .type-option input[type="radio"] {
+            display: none;
+        }
+
+        .type-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .type-option label i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .type-option input[type="radio"]:checked + label {
+            border-color: #4299e1;
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .type-option input[type="radio"]:checked + label i {
+            color: #2b6cb0;
+        }
+
+        /* Input with Icon */
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .input-with-icon input,
+        .input-with-icon textarea,
+        .input-with-icon select {
+            padding-left: 40px;
+        }
+
+        /* Character Count */
+        .char-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        /* Editor Toolbar */
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .format-btn {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+
+        .format-btn:hover {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        /* Recipient Selection */
+        .recipient-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .recipient-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recipient-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .specific-user {
+            margin-left: 24px;
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .specific-user input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+
+        /* Searchable Dropdown */
+        .searchable-dropdown {
+            position: relative;
+        }
+
+        .searchable-dropdown input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .dropdown-results {
+            position: absolute;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+        }
+
+        .dropdown-results .item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dropdown-results .item:hover {
+            background: #f7fafc;
+        }
+
+        .selected-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #e53e3e;
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        /* Options Group */
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 15px 0;
+            border-top: 1px solid #edf2f7;
+            border-bottom: 1px solid #edf2f7;
+            margin: 20px 0;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .btn i {
+            font-size: 0.9em;
+        }
+
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+
+        .btn-outline {
+            background: white;
+            border-color: #cbd5e0;
+            color: #4a5568;
+        }
+
+        .btn-outline:hover {
+            background: #f7fafc;
+            border-color: #a0aec0;
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .type-selector {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: white;
+            border-color: #d1d5db;
+            color: #374151;
+        }
+        
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="../../index.html" class="logo">
+                    <i class="fas fa-search-location"></i> Lost & Found
+                </a>
+                
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                
+                <ul class="nav-links">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../items/browse.html">Browse Items</a></li>
+                    <li><a href="../items/report-lost.html">Report Lost</a></li>
+                    <li><a href="../items/report-found.html">Report Found</a></li>
+                    <li><a href="../dashboard/index.html" class="dashboard-link">Dashboard</a></li>
+                    <li class="admin-link"><a href="#" class="active">Admin</a></li>
+                    
+                    <li class="auth-links">
+                        <a href="../auth/login.html" class="login-link">Login</a>
+                        <a href="../auth/register.html" class="register-link">Register</a>
+                    </li>
+                    
+                    <li class="user-menu" id="userMenu">
+                        <div class="user-menu-trigger">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="user-name">User</span>
+                        </div>
+                        <div class="user-dropdown">
+                            <a href="../dashboard/index.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="admin-header">
+        <div class="container">
+            <h1>Admin Messages</h1>
+            <p>Create and manage messages for users</p>
+        </div>
+    </div>
+    
+    <main class="container">
+        <div class="admin-container">
+            <div class="admin-sidebar">
+                <h2>Admin Panel</h2>
+                <div class="admin-nav">
+                    <a href="#" class="admin-nav-item active">
+                        <i class="fas fa-envelope"></i> Messages
+                    </a>
+                    <a href="send-message.html" class="admin-nav-item">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </a>
+                    <a href="#" class="admin-nav-item">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                    <a href="#" class="admin-nav-item">
+                        <i class="fas fa-box"></i> Items
+                    </a>
+                    <a href="#" class="admin-nav-item">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </a>
+                    <a href="#" class="admin-nav-item">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <h2><i class="fas fa-envelope"></i> Manage Messages</h2>
+                
+                <div class="content-header">
+                    <div class="header-actions">
+                        <div class="search-container">
+                            <input type="text" id="searchMessages" placeholder="Search messages...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="messagesFilter" class="form-control">
+                            <option value="all">All Messages</option>
+                            <option value="announcement">Announcements</option>
+                            <option value="lost">Lost Items</option>
+                            <option value="found">Found Items</option>
+                            <option value="info">Information</option>
+                        </select>
+                        <a href="send-message.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> New Message
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="messages-header">
+                    <h3><i class="fas fa-envelope"></i> All Messages</h3>
+                    <p>View and manage all messages sent to users</p>
+                    <div class="header-actions">
+                        <a href="send-message.html" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="messages-list" id="messagesList">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading messages...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-search-location"></i> Lost & Found
+                </div>
+                <p>Helping you find what's lost and return what's found.</p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../items/browse.html">Browse Items</a></li>
+                        <li><a href="../items/report-lost.html">Report Lost</a></li>
+                        <li><a href="../items/report-found.html">Report Found</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2023 Lost & Found Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="../../js/main.js"></script>
+    <script src="../../js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Character counters
+            const titleInput = document.getElementById('messageTitle');
+            const contentInput = document.getElementById('messageContent');
+            const titleCount = document.getElementById('titleCount');
+            const contentCount = document.getElementById('contentCount');
+            
+            // Recipient type toggle
+            const recipientType = document.querySelectorAll('input[name="recipientType"]');
+            const specificUserContainer = document.getElementById('specificUserContainer');
+            
+            // Related item group
+            const relatedItemGroup = document.getElementById('relatedItemGroup');
+            const messageType = document.querySelectorAll('input[name="messageType"]');
+            
+            // Initialize
+            updateCharCount(titleInput, titleCount);
+            updateCharCount(contentInput, contentCount);
+            
+            // Event Listeners
+            titleInput.addEventListener('input', () => updateCharCount(titleInput, titleCount, 100));
+            contentInput.addEventListener('input', () => updateCharCount(contentInput, contentCount, 2000));
+            
+            // Toggle specific user email field
+            recipientType.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    specificUserContainer.style.display = this.value === 'specific' ? 'flex' : 'none';
+                });
+            });
+            
+            // Toggle related item field based on message type
+            messageType.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const showItemField = ['lost', 'found'].includes(this.value);
+                    relatedItemGroup.style.display = showItemField ? 'block' : 'none';
+                });
+            });
+            
+            // Format buttons for text editor
+            document.querySelectorAll('.format-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const format = this.dataset.format;
+                    formatText(format);
+                });
+            });
+            
+            // Form submission
+            const messageForm = document.getElementById('messageForm');
+            if (messageForm) {
+                messageForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Validate form
+                    if (!validateForm()) {
+                        return;
+                    }
+                    
+                    // Prepare message data
+                    const messageData = {
+                        id: 'msg-' + Date.now(),
+                        title: titleInput.value.trim(),
+                        content: contentInput.value.trim(),
+                        type: document.querySelector('input[name="messageType"]:checked').value,
+                        target: document.querySelector('input[name="recipientType"]:checked').value,
+                        targetUsers: document.getElementById('specificUserEmail').value.trim() || null,
+                        relatedItemId: document.getElementById('relatedItemId').value || null,
+                        isImportant: document.getElementById('isImportant').checked,
+                        sendEmail: document.getElementById('sendEmail').checked,
+                        pinToTop: document.getElementById('pinToTop').checked,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    try {
+                        // Save to localStorage
+                        const messages = JSON.parse(localStorage.getItem('adminMessages') || '[]');
+                        messages.unshift(messageData);
+                        localStorage.setItem('adminMessages', JSON.stringify(messages));
+                        
+                        // Show success message
+                        alert('Message sent successfully!');
+                        
+                        // Reset form
+                        this.reset();
+                        
+                        // Update UI
+                        specificUserContainer.style.display = 'none';
+                        relatedItemGroup.style.display = 'none';
+                        updateCharCount(titleInput, titleCount);
+                        updateCharCount(contentInput, contentCount);
+                        
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                        alert('Failed to send message. Please try again.');
+                    }
+                });
+            }
+            
+            // Save as draft
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            if (saveDraftBtn) {
+                saveDraftBtn.addEventListener('click', function() {
+                    const formData = new FormData(messageForm);
+                    const messageData = {
+                        id: 'draft-' + Date.now(),
+                        title: formData.get('title') || 'Untitled Draft',
+                        content: formData.get('content') || '',
+                        type: formData.get('messageType') || 'announcement',
+                        status: 'draft',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
+                    
+                    // Save draft to localStorage
+                    const drafts = JSON.parse(localStorage.getItem('messageDrafts') || '[]');
+                    drafts.unshift(messageData);
+                    localStorage.setItem('messageDrafts', JSON.stringify(drafts));
+                    
+                    // Show success message
+                    alert('Draft saved successfully!');
+                    
+                    // Reset form
+                    messageForm.reset();
+                    
+                    // Update UI
+                    specificUserContainer.style.display = 'none';
+                    relatedItemGroup.style.display = 'none';
+                    updateCharCount(titleInput, titleCount);
+                    updateCharCount(contentInput, contentCount);
+                });
+            }
+            
+            // Preview button
+            const previewBtn = document.getElementById('previewBtn');
+            if (previewBtn) {
+                previewBtn.addEventListener('click', function() {
+                    // Preview logic here
+                    alert('Preview functionality will be implemented here');
+                });
+            }
+            
+            // Helper Functions
+            function updateCharCount(element, counter, max = null) {
+                const length = element.value.length;
+                counter.textContent = length;
+                
+                if (max && length > max * 0.8) {
+                    counter.style.color = length > max ? '#e53e3e' : '#dd6b20';
+                } else {
+                    counter.style.color = '';
+                }
+            }
+            
+            function validateForm() {
+                // Basic validation
+                if (!titleInput.value.trim()) {
+                    alert('Please enter a title for your message');
+                    titleInput.focus();
+                    return false;
+                }
+                
+                if (!contentInput.value.trim()) {
+                    alert('Please enter the message content');
+                    contentInput.focus();
+                    return false;
+                }
+                
+                const recipientType = document.querySelector('input[name="recipientType"]:checked').value;
+                if (recipientType === 'specific' && !document.getElementById('specificUserEmail').value.trim()) {
+                    alert('Please enter a valid email address for the specific user');
+                    document.getElementById('specificUserEmail').focus();
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            function formatText(format) {
+                const textarea = contentInput;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                let newText = '';
+                
+                switch (format) {
+                    case 'bold':
+                        newText = `**${selectedText}**`;
+                        break;
+                    case 'italic':
+                        newText = `_${selectedText}_`;
+                        break;
+                    case 'link':
+                        const url = prompt('Enter the URL:');
+                        if (url) {
+                            newText = `[${selectedText || 'link'}](${url})`;
+                        } else {
+                            return; // User cancelled
+                        }
+                        break;
+                    case 'list':
+                        newText = selectedText ? `- ${selectedText.replace(/\n/g, '\n- ')}` : '- ';
+                        break;
+                    case 'number':
+                        newText = selectedText ? `1. ${selectedText.replace(/\n/g, '\n1. ')}` : '1. ';
+                        break;
+                }
+                
+                // Update the textarea value
+                textarea.value = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+                
+                // Set cursor position
+                const newCursorPos = start + newText.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            }
+            
+            // Initialize item search functionality
+            const itemSearch = document.getElementById('itemSearch');
+            if (itemSearch) {
+                itemSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+                    const resultsContainer = document.getElementById('itemResults');
+                    
+                    if (searchTerm.length < 2) {
+                        resultsContainer.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Here you would typically fetch matching items from your API
+                    // For now, we'll use a mock function
+                    const mockItems = searchItems(searchTerm);
+                    
+                    if (mockItems.length > 0) {
+                        resultsContainer.innerHTML = mockItems.map(item => 
+                            `<div class="item" data-id="${item.id}">
+                                <strong>${item.title}</strong><br>
+                                <small>${item.type} - ${item.date}</small>
+                            </div>`
+                        ).join('');
+                        
+                        // Add click handlers for the results
+                        document.querySelectorAll('.item').forEach(item => {
+                            item.addEventListener('click', function() {
+                                const itemId = this.dataset.id;
+                                const itemTitle = this.querySelector('strong').textContent;
+                                
+                                document.getElementById('relatedItemId').value = itemId;
+                                document.getElementById('selectedItem').style.display = 'flex';
+                                document.querySelector('#selectedItem .item-preview').textContent = itemTitle;
+                                
+                                resultsContainer.style.display = 'none';
+                                itemSearch.value = '';
+                            });
+                        });
+                        
+                        resultsContainer.style.display = 'block';
+                    } else {
+                        resultsContainer.innerHTML = '<div class="no-results">No items found</div>';
+                        resultsContainer.style.display = 'block';
+                    }
+                });
+            }
+            
+            // Remove selected item
+            const removeItemBtn = document.querySelector('.remove-item');
+            if (removeItemBtn) {
+                removeItemBtn.addEventListener('click', function() {
+                    document.getElementById('relatedItemId').value = '';
+                    document.getElementById('selectedItem').style.display = 'none';
+                });
+            }
+            
+            // Mock function to simulate item search
+            function searchItems(term) {
+                // In a real app, this would be an API call
+                const mockItems = [
+                    { id: '1', title: 'Lost: Black Laptop Bag', type: 'Lost Item', date: '2023-05-15' },
+                    { id: '2', title: 'Found: Blue Water Bottle', type: 'Found Item', date: '2023-05-16' },
+                    { id: '3', title: 'Lost: Silver Keychain', type: 'Lost Item', date: '2023-05-17' },
+                    { id: '4', title: 'Found: Black Umbrella', type: 'Found Item', date: '2023-05-18' },
+                    { id: '5', title: 'Lost: Wireless Earbuds', type: 'Lost Item', date: '2023-05-19' }
+                ];
+                
+                return mockItems.filter(item => 
+                    item.title.toLowerCase().includes(term) || 
+                    item.type.toLowerCase().includes(term)
+                );
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+/* Professional Pop-ups CSS */
+
+/* Base Pop-up Styles */
+.professional-popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26, 35, 126, 0.1);
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.popup-content-home {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    animation: slideUp 0.5s ease;
+    position: relative;
+    border: 1px solid #e2e8f0;
+}
+
+.popup-header {
+    margin-bottom: 20px;
+}
+
+.popup-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.popup-header h3 {
+    color: #1a237e;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.popup-body p {
+    color: #64748b;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.feature-highlights {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+    color: #475569;
+}
+
+.feature-icon {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.close-popup {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #64748b;
+    transition: color 0.3s ease;
+}
+
+.close-popup:hover {
+    color: #1a237e;
+}
+
+/* Success Pop-up */
+.success-popup {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 191, 165, 0.1);
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.success-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,191,165,0.2);
+    animation: bounceIn 0.6s ease;
+    border-left: 4px solid #00bfa5;
+}
+
+.success-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.success-content h3 {
+    color: #00bfa5;
+    margin-bottom: 10px;
+}
+
+.success-content p {
+    color: #64748b;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* Tooltip Styles */
+.tooltip {
+    display: none;
+    position: fixed;
+    z-index: 1002;
+    top: 20px;
+    right: 20px;
+    animation: slideInRight 0.4s ease;
+}
+
+.tooltip-content {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    max-width: 300px;
+    position: relative;
+    border-left: 4px solid #1a237e;
+}
+
+.tooltip-info .tooltip-content {
+    border-left-color: #00bfa5;
+}
+
+.tooltip-admin .tooltip-content {
+    border-left-color: #1a237e;
+}
+
+.tooltip-notification .tooltip-content {
+    border-left-color: #ffc107;
+}
+
+.tooltip-content p {
+    margin: 0;
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.4;
+}
+
+.tooltip-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+/* Match Celebration */
+.match-celebration {
+    display: none;
+    position: fixed;
+    z-index: 1003;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 193, 7, 0.1);
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.celebration-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(255,193,7,0.3);
+    animation: celebrationBounce 0.8s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.celebration-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    pointer-events: none;
+}
+
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffc107;
+    animation: confettiFall 2s linear infinite;
+}
+
+.confetti:nth-child(1) {
+    left: 20%;
+    animation-delay: 0s;
+    background: #ff6b6b;
+}
+
+.confetti:nth-child(2) {
+    left: 50%;
+    animation-delay: 0.5s;
+    background: #4ecdc4;
+}
+
+.confetti:nth-child(3) {
+    left: 80%;
+    animation-delay: 1s;
+    background: #45b7d1;
+}
+
+.celebration-content h2 {
+    color: #ffc107;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.celebration-content p {
+    color: #64748b;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes celebrationBounce {
+    0% { transform: scale(0) rotate(-360deg); opacity: 0; }
+    50% { transform: scale(1.1) rotate(-180deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes confettiFall {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .popup-content-home,
+    .success-content,
+    .celebration-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .tooltip {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .tooltip-content {
+        max-width: none;
+    }
+    
+    .feature-highlights {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .feature-item {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+    }
+}

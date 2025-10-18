@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lost & Found - Reuniting people with their lost items through a secure and efficient platform.">
+    <title>Lost & Found - Reuniting You with What Matters Most</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-search-location"></i>
+                <span>Lost & Found</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="pages/items/browse.html">Browse Items</a>
+                <a href="pages/items/report-lost.html">Report Lost</a>
+                <a href="pages/items/report-found.html">Report Found</a>
+                <a href="pages/dashboard/index.html" class="dashboard-link" style="display: none;">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <div class="user-menu" id="userMenu">
+                    <a href="#" id="logoutBtn" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+            <button class="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content animate-on-scroll fade-in-up">
+                <span class="hero-badge"><i class="fas fa-shield-alt"></i> Trusted by thousands</span>
+                <h1>Lost Something Valuable?</h1>
+                <p class="hero-subtitle">Our intelligent platform helps reunite people with their lost belongings through a secure and efficient system. Join our community today and experience peace of mind.</p>
+                <div class="hero-buttons">
+                    <a href="pages/items/report-lost.html" class="btn btn-primary hover-scale">
+                        <i class="fas fa-search"></i> Find Lost Item
+                    </a>
+                    <a href="pages/items/report-found.html" class="btn btn-outline hover-scale">
+                        <i class="fas fa-hand-holding-heart"></i> Report Found Item
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item animate-on-scroll fade-in delay-1">
+                        <span class="stat-number">10,000+</span>
+                        <span class="stat-label">Items Reunited</span>
+                    </div>
+                    <div class="stat-item animate-on-scroll fade-in delay-2">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                    <div class="stat-item animate-on-scroll fade-in delay-3">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search for lost items...">
+                    <button class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header animate-on-scroll fade-in-up">
+                <span class="section-subtitle">Our Process</span>
+                <h2>How We Reunite Lost Items</h2>
+                <p>Our streamlined process ensures the highest chance of reuniting lost items with their owners.</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card animate-on-scroll fade-in-up hover-lift">
+                    <div class="feature-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-search-location"></i>
+                        </div>
+                        <span class="feature-number">01</span>
+                    </div>
+                    <h3>Advanced Search</h3>
+                    <p>Utilize our powerful search engine with filters for location, date, and item category to quickly find your lost belongings.</p>
+                    <a href="pages/items/browse.html" class="feature-link">Search Now <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="feature-card animate-on-scroll fade-in-up hover-lift delay-1">
+                    <div class="feature-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <span class="feature-number">02</span>
+                    </div>
+                    <h3>Smart Reporting</h3>
+                    <p>Report lost or found items with our intelligent form that suggests categories and locations for better matching.</p>
+                    <a href="pages/items/report-lost.html" class="feature-link">Report Item <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="feature-card animate-on-scroll fade-in-up hover-lift delay-2">
+                    <div class="feature-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span class="feature-number">03</span>
+                    </div>
+                    <h3>Secure Verification</h3>
+                    <p>Our verification system ensures that items are only returned to their rightful owners through secure validation.</p>
+                    <a href="pages/auth/register.html" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="features-cta">
+                <div class="cta-content">
+                    <h3>Ready to find your lost item?</h3>
+                    <p>Join thousands of satisfied users who have been reunited with their belongings.</p>
+                </div>
+                <div class="cta-buttons">
+                    <a href="pages/items/report-lost.html" class="btn btn-primary">Report Lost Item</a>
+                    <a href="pages/items/browse.html" class="btn btn-outline">Browse Found Items</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Items -->
+    <section class="recent-items">
+        <div class="container">
+            <h2>Recently Found Items</h2>
+            <div class="items-grid" id="recentItems">
+                <!-- Items will be loaded dynamically via JavaScript -->
+            </div>
+
+            <div class="admin-messages-container" style="margin-top: 2rem; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
+                <h3>Admin Messages</h3>
+                <div id="adminMessagesList">
+                    <!-- Admin messages will be loaded here -->
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="pages/items/browse.html" class="btn btn-outline">View All Items</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Lost & Found</h3>
+                    <p>Helping people reunite with their lost belongings since 2023.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="pages/items/browse.html">Browse Items</a></li>
+                        <li><a href="pages/items/report-lost.html">Report Lost</a></li>
+                        <li><a href="pages/items/report-found.html">Report Found</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Lost & Found. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Check if user is logged in (in a real app, this would check a token or session)
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userName = localStorage.getItem('userName') || 'User';
+            
+            const authLinks = document.getElementById('authLinks');
+            const userMenu = document.getElementById('userMenu');
+            const userNameElement = document.getElementById('userName');
+            const dashboardLink = document.querySelector('.dashboard-link');
+            
+            if (isLoggedIn) {
+                if (authLinks) authLinks.style.display = 'none';
+                if (userMenu) userMenu.style.display = 'flex';
+                if (userNameElement) userNameElement.textContent = userName;
+                if (dashboardLink) dashboardLink.style.display = 'inline-flex';
+            } else {
+                // Hide logout button and dashboard link when not logged in
+                if (userMenu) userMenu.style.display = 'none';
+                if (dashboardLink) dashboardLink.style.display = 'none';
+            }
+            
+            // Handle logout
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Clear auth data
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userName');
+                    // Redirect to login page instead of home page
+                    window.location.href = 'pages/auth/login.html';
+                });
+            }
+
+            // Load admin messages from localStorage and display
+            function loadAdminMessages() {
+                const messages = JSON.parse(localStorage.getItem('adminMessages') || '[]');
+                return messages;
+            }
+
+            function displayAdminMessages() {
+                const container = document.getElementById('adminMessagesList');
+                const messages = loadAdminMessages();
+                console.log('Admin messages loaded:', messages); // Debug log
+                if (messages.length === 0) {
+                    container.innerHTML = '<p>No admin messages available.</p>';
+                    return;
+                }
+                const html = messages.map(msg => `
+                    <div style="border-bottom: 1px solid #ddd; padding: 0.5rem 0;">
+                        <strong>${msg.title}</strong>
+                        <p>${msg.content}</p>
+                        <small style="color: #666;">${new Date(msg.date).toLocaleString()}</small>
+                    </div>
+                `).join('');
+                container.innerHTML = html;
+            }
+
+            function displayAdminMessages() {
+                const container = document.getElementById('adminMessagesList');
+                const messages = loadAdminMessages();
+                console.log('Admin messages loaded:', messages); // Debug log
+                if (messages.length === 0) {
+                    container.innerHTML = '<p>No admin messages available.</p>';
+                    return;
+                }
+                const html = messages.map(msg => `
+                    <div style="border-bottom: 1px solid #ddd; padding: 0.5rem 0;">
+                        <strong>${msg.title}</strong>
+                        <p>${msg.content}</p>
+                        <small style="color: #666;">${new Date(msg.date).toLocaleString()}</small>
+                    </div>
+                `).join('');
+                container.innerHTML = html;
+            }
+
+            // Override recentItems content to show only admin messages
+            function displayOnlyAdminMessages() {
+                const recentItemsContainer = document.getElementById('recentItems');
+                recentItemsContainer.innerHTML = ''; // Clear existing items
+                displayAdminMessages();
+            }
+
+            displayOnlyAdminMessages();
+        });
+    </script>
+</body>
+</html>

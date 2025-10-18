@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}My Rewards - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-gift"></i>
+        My Rewards
+    </h1>
+    <p class="page-subtitle">Your contributions to the community</p>
+</div>
+
+<!-- Stats Overview -->
+<div class="grid-2">
+    <div class="glass-card stats-card">
+        <div class="stats-content">
+            <div class="stats-icon">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="stats-info">
+                <h3>Total Tokens</h3>
+                <div class="stats-number">{{ total_tokens }}</div>
+                <p>Earned from helping others</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card stats-card">
+        <div class="stats-content">
+            <div class="stats-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stats-info">
+                <h3>People Helped</h3>
+                <div class="stats-number">{{ rewards|length }}</div>
+                <p>Grateful community members</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rewards List -->
+<div class="glass-card">
+    {% if rewards %}
+        <h2><i class="fas fa-history"></i> Reward History</h2>
+        <div class="rewards-list">
+            {% for reward in rewards %}
+            <div class="reward-item">
+                <div class="reward-left">
+                    <div class="reward-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="reward-details">
+                        <h4>{{ reward.item_name }}</h4>
+                        <p class="reward-from">From: {{ reward.giver_name }}</p>
+                        {% if reward.message %}
+                        <p class="reward-message">"{{ reward.message }}"</p>
+                        {% endif %}
+                        <small class="reward-date">{{ reward.created_at }}</small>
+                    </div>
+                </div>
+                <div class="reward-right">
+                    <div class="reward-tokens">
+                        <span class="token-amount">+{{ reward.tokens }}</span>
+                        <span class="token-label">tokens</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-gift"></i>
+            <h3>No Rewards Yet</h3>
+            <p>Start helping others to earn your first tokens!</p>
+            <div class="empty-actions">
+                <a href="{{ url_for('report_found') }}" class="btn btn-primary">Report Found Item</a>
+                <a href="{{ url_for('my_reports') }}" class="btn btn-secondary">My Reports</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Info Section -->
+<div class="glass-card">
+    <h3><i class="fas fa-info-circle"></i> How Rewards Work</h3>
+    <div class="info-grid">
+        <div class="info-item">
+            <i class="fas fa-search"></i>
+            <h4>Find Items</h4>
+            <p>Report found items to help others</p>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-handshake"></i>
+            <h4>Get Matched</h4>
+            <p>System connects you with item owners</p>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-coins"></i>
+            <h4>Earn Tokens</h4>
+            <p>Receive tokens as gratitude</p>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-heart"></i>
+            <h4>Build Reputation</h4>
+            <p>Become a trusted community helper</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Stats Cards */
+.stats-card {
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+}
+
+.stats-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748B;
+    font-size: 1.5rem;
+}
+
+.stats-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0.25rem 0;
+}
+
+.stats-info p {
+    margin: 0;
+    color: #6B7280;
+    font-size: 0.875rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: white;
+    margin: 3% auto;
+    padding: 50px;
+    border-radius: 20px;
+    width: 95%;
+    max-width: 800px;
+    text-align: center;
+    animation: slideIn 0.5s ease;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    position: relative;
+    max-height: 95vh;
+    overflow-y: auto;
+    min-height: 400px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Celebration Animation */
+.celebration {
+    position: relative;
+    overflow: hidden;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ffc107;
+    animation: confettiFall 3s linear infinite;
+}
+
+.confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #ff6b6b; }
+.confetti:nth-child(2) { left: 30%; animation-delay: 0.5s; background: #4ecdc4; }
+.confetti:nth-child(3) { left: 50%; animation-delay: 1s; background: #45b7d1; }
+.confetti:nth-child(4) { left: 70%; animation-delay: 1.5s; background: #96ceb4; }
+.confetti:nth-child(5) { left: 90%; animation-delay: 2s; background: #feca57; }
+
+@keyframes confettiFall {
+    0% { transform: translateY(-100px) rotate(0deg); }
+    100% { transform: translateY(400px) rotate(360deg); }
+}
+
+/* Pop-up Styles */
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.popup-content {
+    background: linear-gradient(135deg, #78716C 0%, #57534E 100%);
+    color: white;
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    position: relative;
+    min-width: 500px;
+    max-width: 95vw;
+    min-height: 350px;
+}
+
+.popup-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: bounce 1s infinite;
+}
+
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.close-popup {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+.popup-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffc107;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Enhanced Reward Cards */
+.token-card, .impact-card {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.token-card {
+    background: linear-gradient(135deg, #78716C, #57534E);
+    color: white;
+}
+
+.impact-card {
+    background: linear-gradient(135deg, #A8A29E, #78716C);
+    color: white;
+}
+
+.token-icon, .impact-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.token-count, .impact-count {
+    font-size: 3rem !important;
+    font-weight: bold !important;
+    margin: 20px 0 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.sparkle {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: sparkle 2s linear infinite;
+}
+
+.sparkle-1 { top: 20px; right: 20px; animation-delay: 0s; }
+.sparkle-2 { bottom: 20px; left: 20px; animation-delay: 0.7s; }
+.sparkle-3 { top: 50%; right: 10px; animation-delay: 1.4s; }
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+}
+
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+/* Enhanced Reward Cards */
+.reward-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.reward-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    border-color: #00bfa5;
+}
+
+.reward-hover-effect {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #00bfa5, #00acc1);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.reward-card:hover .reward-hover-effect {
+    bottom: 0;
+}
+
+.animate-bounce {
+    animation: tokenBounce 0.6s ease;
+}
+
+@keyframes tokenBounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-5px); }
+    60% { transform: translateY(-3px); }
+}
+
+.floating-tokens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+}
+
+.token {
+    position: absolute;
+    font-size: 2rem;
+    animation: floatToken 3s linear infinite;
+}
+
+.token:nth-child(1) { left: 20%; animation-delay: 0s; }
+.token:nth-child(2) { left: 50%; animation-delay: 1s; }
+.token:nth-child(3) { left: 80%; animation-delay: 2s; }
+
+@keyframes floatToken {
+    0% { transform: translateY(100px) rotate(0deg); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+</style>
+
+</style>
+<script>
+// Simple, clean JavaScript - no complex animations
+</script>
+
+<div class="back-button-section">
+    <a href="{{ url_for('user_dashboard') }}" class="back-btn">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}

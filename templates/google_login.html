@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="login-container">
+        <h2>🔐 Sign In to Lost & Found</h2>
+        <p>Secure authentication with your Google account</p>
+        
+        <div class="google-signin-section">
+            <a href="{{ url_for('google_auth.google_login') }}" class="google-signin-btn">
+                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-logo">
+                Sign in with Google
+            </a>
+        </div>
+        
+        <div class="info-section">
+            <h4>📋 Authorized Accounts:</h4>
+            <ul>
+                <li>✅ @gmail.com accounts</li>
+                <li>✅ @klu.ac.in accounts</li>
+                <li>🔒 Secure OAuth 2.0 authentication</li>
+                <li>🚀 Quick and easy access</li>
+            </ul>
+        </div>
+        
+        <div class="benefits">
+            <h4>🌟 Why Sign In?</h4>
+            <p>• Report lost and found items</p>
+            <p>• Track your submissions</p>
+            <p>• Get match notifications</p>
+            <p>• Access reward system</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.google-signin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background: #4285f4;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+}
+
+.google-signin-btn:hover {
+    background: #3367d6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    background: white;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+.info-section, .benefits {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.info-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-section li {
+    margin: 8px 0;
+    color: #28a745;
+}
+
+.benefits p {
+    margin: 8px 0;
+    color: #495057;
+}
+</style>
+{% endblock %}

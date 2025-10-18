@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Lost Item - KLU Lost & Found</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="../../css/theme.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Page specific styles */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 6rem 0 4rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('https://www.kluniversity.in/images/slider/slider2.jpg') center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 1;
+        }
+
+        .page-header .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 0.8s ease forwards;
+            color: white;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+            animation: fadeIn 0.8s ease 0.2s forwards;
+            opacity: 0;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: slideInUp 0.6s ease 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+
+        .form-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-body {
+            padding: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .form-section:nth-child(1) { animation-delay: 0.4s; }
+        .form-section:nth-child(2) { animation-delay: 0.5s; }
+        .form-section:nth-child(3) { animation-delay: 0.6s; }
+
+        .form-section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light-gray);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-lighter);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Image Upload */
+        .image-upload-container {
+            border: 2px dashed var(--light-gray);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .image-upload-container:hover, .image-upload-container.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(66, 153, 225, 0.05);
+        }
+
+        .image-upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .image-upload-text {
+            margin-bottom: 1rem;
+        }
+
+        .image-upload-hint {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--light-gray);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preview-remove:hover {
+            background: var(--danger);
+        }
+
+        /* Reward Section */
+        .reward-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .reward-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(66, 153, 225, 0.05);
+        }
+
+        .reward-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .reward-amount {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .reward-amount input {
+            max-width: 150px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../../index.html" class="logo">
+                <i class="fas fa-search-location"></i>
+                <span>KLU Lost & Found</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="browse.html">Browse Items</a>
+                <a href="report-lost.html" class="active">Report Lost</a>
+                <a href="report-found.html">Report Found</a>
+                <a href="../dashboard/" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">Report a Lost Item</h1>
+            <p class="page-subtitle">Fill out the form below to report your lost item. Provide as much detail as possible to help us find it.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <form id="lostItemForm" class="form-container" onsubmit="return handleLostItemSubmission(event)">
+            <div class="form-header">
+                <h2><i class="fas fa-search"></i> Item Details</h2>
+            </div>
+            
+            <div class="form-body">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemName" class="form-label">Item Name *</label>
+                            <input type="text" id="itemName" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category" class="form-label">Category *</label>
+                            <select id="category" class="form-select" required>
+                                <option value="">Select a category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="documents">Documents</option>
+                                <option value="accessories">Accessories</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="books">Books & Notes</option>
+                                <option value="id">ID Cards</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea id="description" class="form-textarea" required 
+                                  placeholder="Provide a detailed description of the item including brand, model, color, size, and any distinguishing features."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Lost Details -->
+                <div class="form-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Lost Details</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lostDate" class="form-label">Date Lost *</label>
+                            <input type="date" id="lostDate" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostTime" class="form-label">Approximate Time</label>
+                            <input type="time" id="lostTime" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location" class="form-label">Location Lost *</label>
+                        <input type="text" id="location" class="form-control" required 
+                               placeholder="E.g., Library, Cafeteria, Block A, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalDetails" class="form-label">Additional Details</label>
+                        <textarea id="additionalDetails" class="form-textarea" 
+                                  placeholder="Any additional information that might help in finding your item..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Upload Images -->
+                <div class="form-section">
+                    <h3><i class="fas fa-images"></i> Upload Images</h3>
+                    
+                    <div id="imageUpload" class="image-upload-container">
+                        <div class="image-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="image-upload-text">
+                            <p>Drag & drop images here or click to browse</p>
+                        </div>
+                        <div class="image-upload-hint">
+                            <p>Upload up to 5 images (JPG, PNG, max 5MB each)</p>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                    </div>
+                    
+                    <div id="imagePreview" class="image-preview">
+                        <!-- Preview images will be added here -->
+                    </div>
+                </div>
+                
+                <!-- Reward -->
+                <div class="form-section">
+                    <h3><i class="fas fa-gift"></i> Reward (Optional)</h3>
+                    
+                    <div class="form-group">
+                        <div class="reward-option">
+                            <input type="radio" id="noReward" name="reward" value="none" checked>
+                            <label for="noReward">No reward</label>
+                        </div>
+                        
+                        <div class="reward-option">
+                            <input type="radio" id="rewardYes" name="reward" value="yes">
+                            <label for="rewardYes">I'm offering a reward</label>
+                        </div>
+                        
+                        <div id="rewardAmountContainer" style="display: none; margin-top: 1rem;">
+                            <div class="reward-amount">
+                                <span>Amount (₹):</span>
+                                <input type="number" id="rewardAmount" class="form-control" min="0" placeholder="Enter amount">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Contact Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">Full Name *</label>
+                            <input type="text" id="fullName" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">KLU Email *</label>
+                            <input type="email" id="email" class="form-control" required 
+                                   pattern="[a-zA-Z0-9._%+-]+@klu\.ac\.in$" 
+                                   title="Please enter a valid KLU email address">
+                            <small class="form-text text-muted">Only @klu.ac.in emails are accepted</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number *</label>
+                            <input type="tel" id="phone" class="form-control" required 
+                                   pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studentId" class="form-label">Student/Staff ID *</label>
+                            <input type="text" id="studentId" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Report
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>KLU Lost & Found</h4>
+                    <p>Helping the KLU community reunite with their lost items since 2023.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="browse.html">Browse Items</a></li>
+                        <li><a href="report-lost.html">Report Lost Item</a></li>
+                        <li><a href="report-found.html">Report Found Item</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> lostandfound@kluniversity.in</p>
+                    <p><i class="fas fa-phone"></i> +91 1234567890</p>
+                    <p><i class="fas fa-map-marker-alt"></i> KL University, Vaddeswaram, AP</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 KL University Lost & Found. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle reward amount field
+            const rewardYes = document.getElementById('rewardYes');
+            const rewardAmountContainer = document.getElementById('rewardAmountContainer');
+            
+            rewardYes.addEventListener('change', function() {
+                rewardAmountContainer.style.display = this.checked ? 'block' : 'none';
+                if (this.checked) {
+                    document.getElementById('rewardAmount').focus();
+                }
+            });
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('lostDate').value = today;
+            
+            // Set default time to current time
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('lostTime').value = `${hours}:${minutes}`;
+            
+            // Image upload functionality
+            const imageUpload = document.getElementById('imageUpload');
+            const imageInput = document.getElementById('imageInput');
+            const imagePreview = document.getElementById('imagePreview');
+            let imageFiles = [];
+            
+            // Handle drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                imageUpload.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                imageUpload.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                imageUpload.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                imageUpload.classList.add('dragover');
+            }
+            
+            function unhighlight() {
+                imageUpload.classList.remove('dragover');
+            }
+            
+            // Handle dropped files
+            imageUpload.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            // Handle selected files
+            imageUpload.addEventListener('click', function() {
+                imageInput.click();
+            });
+            
+            imageInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            function handleFiles(selectedFiles) {
+                // Clear existing files if we're at the limit
+                if (imageFiles.length >= 5) {
+                    alert('You can upload a maximum of 5 images.');
+                    return;
+                }
+                
+                // Convert FileList to array and filter images
+                const files = Array.from(selectedFiles).filter(file => file.type.startsWith('image/'));
+                
+                // Check total files won't exceed limit
+                if (imageFiles.length + files.length > 5) {
+                    alert(`You can only upload ${5 - imageFiles.length} more images.`);
+                    return;
+                }
+                
+                // Add new files to the array
+                files.forEach((file, index) => {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+                        return;
+                    }
+                    
+                    imageFiles.push(file);
+                    
+                    // Create preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'preview-item';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview">
+                            <button class="preview-remove" data-index="${imageFiles.length - 1}">&times;</button>
+                        `;
+                        imagePreview.appendChild(previewItem);
+                        
+                        // Add remove functionality
+                        const removeBtn = previewItem.querySelector('.preview-remove');
+                        removeBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const index = parseInt(this.getAttribute('data-index'));
+                            imageFiles.splice(index, 1);
+                            updatePreviewIndices();
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+                
+                updatePreviewIndices();
+            }
+            
+            function updatePreviewIndices() {
+                const previewItems = document.querySelectorAll('.preview-item');
+                previewItems.forEach((item, index) => {
+                    item.querySelector('.preview-remove').setAttribute('data-index', index);
+                });
+                
+                // Update file input (not really needed as we're handling files in memory)
+                // But we can update the display if needed
+            }
+            
+            // Form submission
+            window.handleLostItemSubmission = function(e) {
+                e.preventDefault();
+                
+                // Basic validation
+                const form = document.getElementById('lostItemForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return false;
+                }
+                
+                // Check if at least one image is uploaded
+                if (imageFiles.length === 0 && !confirm('You haven\'t uploaded any images. Are you sure you want to continue?')) {
+                    return false;
+                }
+                
+                // Get form data
+                const formData = new FormData();
+                
+                // Add text fields
+                formData.append('itemName', document.getElementById('itemName').value);
+                formData.append('category', document.getElementById('category').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('lostDate', document.getElementById('lostDate').value);
+                formData.append('lostTime', document.getElementById('lostTime').value);
+                formData.append('location', document.getElementById('location').value);
+                formData.append('additionalDetails', document.getElementById('additionalDetails').value);
+                formData.append('fullName', document.getElementById('fullName').value);
+                formData.append('email', document.getElementById('email').value);
+                formData.append('phone', document.getElementById('phone').value);
+                formData.append('studentId', document.getElementById('studentId').value);
+                
+                // Add reward info
+                const hasReward = document.getElementById('rewardYes').checked;
+                formData.append('hasReward', hasReward);
+                if (hasReward) {
+                    formData.append('rewardAmount', document.getElementById('rewardAmount').value || '0');
+                }
+                
+                // Add images
+                imageFiles.forEach((file, index) => {
+                    formData.append(`image${index}`, file);
+                });
+                
+                // In a real application, you would send this data to your server
+                console.log('Form data:', Object.fromEntries(formData));
+                
+                // Save form data to localStorage for admin dashboard
+                const report = {
+                    id: Date.now().toString(),
+                    title: document.getElementById('itemName').value,
+                    category: document.getElementById('category').value,
+                    description: document.getElementById('description').value,
+                    date: document.getElementById('lostDate').value,
+                    time: document.getElementById('lostTime').value,
+                    location: document.getElementById('location').value,
+                    additionalDetails: document.getElementById('additionalDetails').value,
+                    type: 'lost',
+                    contact_info: {
+                        full_name: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        student_staff_id: document.getElementById('studentId').value
+                    }
+                };
+                let reports = JSON.parse(localStorage.getItem('lostFoundReports') || '[]');
+                reports.push(report);
+                localStorage.setItem('lostFoundReports', JSON.stringify(reports));
+                
+                alert('Your lost item report has been submitted successfully!');
+                
+                // Redirect to browse page after submission
+                setTimeout(() => {
+                    window.location.href = 'browse.html';
+                }, 1000);
+                
+                return false;
+            };
+        });
+    </script>
+</body>
+</html>

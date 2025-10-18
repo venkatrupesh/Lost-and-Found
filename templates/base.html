@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lost & Found{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-search"></i>
+                <span>Lost & Found</span>
+            </div>
+            <div class="nav-links">
+                {% set current_page = request.endpoint %}
+                
+                {% if current_page == 'user_dashboard' or current_page == 'my_reports' or current_page == 'my_notifications' or current_page == 'my_rewards' or current_page == 'report_lost' or current_page == 'report_found' %}
+                    <!-- User Dashboard Navigation -->
+                    <a href="{{ url_for('user_dashboard') }}" class="nav-btn">
+                        <i class="fas fa-user"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('community') }}" class="nav-btn">
+                        <i class="fas fa-users"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="{{ url_for('google_auth.logout') }}" class="nav-btn nav-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                {% elif current_page == 'admin_dashboard' %}
+                    <!-- Admin Dashboard Navigation -->
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Admin</span>
+                    </a>
+                    <a href="{{ url_for('community') }}" class="nav-btn">
+                        <i class="fas fa-users"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="{{ url_for('index') }}" class="nav-btn nav-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                {% else %}
+                    <!-- Default Navigation -->
+                    <a href="{{ url_for('index') }}" class="nav-btn">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    {% if session.google_authenticated %}
+                    <a href="{{ url_for('user_dashboard') }}" class="nav-btn">
+                        <i class="fas fa-user"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('community') }}" class="nav-btn">
+                        <i class="fas fa-users"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Admin</span>
+                    </a>
+                    {% if session.google_authenticated %}
+                    <a href="{{ url_for('google_auth.logout') }}" class="nav-btn nav-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'danger' else 'warning' if category == 'warning' else 'info' }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'danger' else 'info-circle' }}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popups.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

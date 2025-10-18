@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "System Maintenance Notice",
+    "content": "The Lost & Found portal will be undergoing maintenance on October 1st from 2:00 AM to 6:00 AM IST. The service may be temporarily unavailable during this period.",
+    "timestamp": "2023-09-14T10:00:00Z",
+    "isRead": false
+  },
+  {
+    "id": 2,
+    "title": "Welcome to KLU Lost & Found",
+    "content": "Welcome to the KLU Lost & Found portal. Please make sure to report any lost or found items through our system. Thank you for helping keep our campus organized!",
+    "timestamp": "2023-09-10T09:30:00Z",
+    "isRead": false
+  }
+]

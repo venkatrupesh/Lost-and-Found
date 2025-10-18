@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+
+{% block title %}Community - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-users"></i>
+        Community Hub
+    </h1>
+    <p class="page-subtitle">See what's happening in our helpful community</p>
+</div>
+
+<!-- Quick Search -->
+<div class="glass-card">
+    <h2><i class="fas fa-search"></i> Quick Search</h2>
+    <div class="search-container">
+        <input type="text" id="quickSearch" placeholder="Search for items, locations, or descriptions..." class="search-input">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+</div>
+
+<!-- Live Feed & Leaderboard -->
+<div class="grid-2">
+    <!-- Live Activity Feed -->
+    <div class="glass-card">
+        <h2><i class="fas fa-rss"></i> Live Activity Feed</h2>
+        <div id="liveFeed" class="activity-feed">
+            <div class="loading-spinner">Loading activities...</div>
+        </div>
+        <button onclick="refreshFeed()" class="btn btn-secondary" style="margin-top: 1rem;">
+            <i class="fas fa-refresh"></i> Refresh
+        </button>
+    </div>
+    
+    <!-- Community Leaderboard -->
+    <div class="glass-card">
+        <h2><i class="fas fa-trophy"></i> Community Leaders</h2>
+        <div class="leaderboard-tabs">
+            <button class="tab-btn active" onclick="showLeaderboard('helpers')">Top Helpers</button>
+            <button class="tab-btn" onclick="showLeaderboard('reporters')">Most Active</button>
+        </div>
+        <div id="leaderboard" class="leaderboard-content">
+            <div class="loading-spinner">Loading leaderboard...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Community Stats -->
+<div class="glass-card">
+    <h2><i class="fas fa-chart-bar"></i> Community Impact</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" id="totalMatches">-</div>
+                <div class="stat-label">Items Reunited</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" id="activeUsers">-</div>
+                <div class="stat-label">Active Helpers</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-coins"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" id="totalTokens">-</div>
+                <div class="stat-label">Tokens Earned</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-info">
+                <div class="stat-number" id="avgResponseTime">-</div>
+                <div class="stat-label">Avg Response Time</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Search Container */
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #78716C;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+}
+
+.search-item {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.search-item:hover {
+    background: rgba(120, 113, 108, 0.1);
+}
+
+.search-item:last-child {
+    border-bottom: none;
+}
+
+/* Activity Feed */
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.activity-lost { background: #EF4444; }
+.activity-found { background: #22C55E; }
+.activity-reward { background: #F59E0B; }
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.activity-details {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+}
+
+/* Leaderboard */
+.leaderboard-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #374151;
+}
+
+.tab-btn.active {
+    background: #78716C;
+    color: white;
+}
+
+.leaderboard-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.rank-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 0.875rem;
+}
+
+.rank-1 { background: #FFD700; }
+.rank-2 { background: #C0C0C0; }
+.rank-3 { background: #CD7F32; }
+.rank-other { background: #78716C; }
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #374151;
+}
+
+.user-stats {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.user-score {
+    font-weight: bold;
+    color: #059669;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
+    color: #64748B;
+    font-size: 1.25rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1F2937;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 2rem;
+    color: #6B7280;
+}
+
+@media (max-width: 768px) {
+    .leaderboard-tabs {
+        flex-direction: column;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+let currentLeaderboardType = 'helpers';
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadLiveFeed();
+    loadLeaderboard();
+    loadCommunityStats();
+    setupQuickSearch();
+});
+
+// Quick Search
+function setupQuickSearch() {
+    const searchInput = document.getElementById('quickSearch');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            fetch(`/quick_search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data);
+                })
+                .catch(error => console.error('Search error:', error));
+        }, 300);
+    });
+
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+}
+
+function displaySearchResults(results) {
+    const container = document.getElementById('searchResults');
+    
+    if (results.length === 0) {
+        container.innerHTML = '<div class="search-item">No items found</div>';
+    } else {
+        let html = '';
+        results.forEach(item => {
+            const typeColor = item.type === 'lost' ? '#EF4444' : '#22C55E';
+            html += `
+                <div class="search-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${item.item_name}</strong>
+                            <div style="font-size: 0.875rem; color: #6B7280;">${item.description}</div>
+                            <div style="font-size: 0.75rem; color: #9CA3AF;">📍 ${item.location}</div>
+                        </div>
+                        <span style="background: ${typeColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem;">
+                            ${item.type.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+    
+    container.style.display = 'block';
+}
+
+// Live Feed
+function loadLiveFeed() {
+    fetch('/live_feed')
+        .then(response => response.json())
+        .then(data => {
+            displayLiveFeed(data);
+        })
+        .catch(error => {
+            console.error('Feed error:', error);
+            document.getElementById('liveFeed').innerHTML = '<div class="loading-spinner">Error loading feed</div>';
+        });
+}
+
+function displayLiveFeed(activities) {
+    const container = document.getElementById('liveFeed');
+    
+    if (activities.length === 0) {
+        container.innerHTML = '<div class="loading-spinner">No recent activities</div>';
+        return;
+    }
+    
+    let html = '';
+    activities.forEach(activity => {
+        if (activity.activity_type === 'report') {
+            const iconClass = activity.type === 'lost' ? 'activity-lost' : 'activity-found';
+            const icon = activity.type === 'lost' ? 'fas fa-exclamation-triangle' : 'fas fa-search';
+            const timeAgo = getTimeAgo(activity.date_reported);
+            
+            html += `
+                <div class="activity-item">
+                    <div class="activity-icon ${iconClass}">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.type === 'lost' ? 'Lost' : 'Found'}: ${activity.item_name}</div>
+                        <div class="activity-details">📍 ${activity.location}</div>
+                        <div class="activity-time">${timeAgo}</div>
+                    </div>
+                </div>
+            `;
+        } else if (activity.activity_type === 'reward') {
+            const timeAgo = getTimeAgo(activity.created_at);
+            
+            html += `
+                <div class="activity-item">
+                    <div class="activity-icon activity-reward">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Reward Given: ${activity.tokens} tokens</div>
+                        <div class="activity-details">For finding: ${activity.item_name}</div>
+                        <div class="activity-time">${timeAgo}</div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    container.innerHTML = html;
+}
+
+function refreshFeed() {
+    document.getElementById('liveFeed').innerHTML = '<div class="loading-spinner">Refreshing...</div>';
+    loadLiveFeed();
+}
+
+// Leaderboard
+function loadLeaderboard() {
+    fetch('/leaderboard')
+        .then(response => response.json())
+        .then(data => {
+            window.leaderboardData = data;
+            showLeaderboard(currentLeaderboardType);
+        })
+        .catch(error => {
+            console.error('Leaderboard error:', error);
+            document.getElementById('leaderboard').innerHTML = '<div class="loading-spinner">Error loading leaderboard</div>';
+        });
+}
+
+function showLeaderboard(type) {
+    currentLeaderboardType = type;
+    
+    // Update tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    const data = window.leaderboardData;
+    if (!data) return;
+    
+    const container = document.getElementById('leaderboard');
+    const items = type === 'helpers' ? data.helpers : data.reporters;
+    
+    if (items.length === 0) {
+        container.innerHTML = '<div class="loading-spinner">No data available</div>';
+        return;
+    }
+    
+    let html = '';
+    items.forEach((item, index) => {
+        const rank = index + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+        
+        if (type === 'helpers') {
+            html += `
+                <div class="leaderboard-item">
+                    <div class="rank-badge ${rankClass}">${rank}</div>
+                    <div class="user-info">
+                        <div class="user-name">${item.finder_name}</div>
+                        <div class="user-stats">${item.items_found} items found</div>
+                    </div>
+                    <div class="user-score">${item.total_tokens} tokens</div>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="leaderboard-item">
+                    <div class="rank-badge ${rankClass}">${rank}</div>
+                    <div class="user-info">
+                        <div class="user-name">${item.name}</div>
+                        <div class="user-stats">${item.lost_reports} lost, ${item.found_reports} found</div>
+                    </div>
+                    <div class="user-score">${item.total_reports} reports</div>
+                </div>
+            `;
+        }
+    });
+    
+    container.innerHTML = html;
+}
+
+// Community Stats
+function loadCommunityStats() {
+    fetch('/community_stats')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('totalMatches').textContent = data.total_matches;
+            document.getElementById('activeUsers').textContent = data.active_users;
+            document.getElementById('totalTokens').textContent = data.total_tokens.toLocaleString();
+            document.getElementById('avgResponseTime').textContent = data.avg_response_time;
+        })
+        .catch(error => {
+            console.error('Stats error:', error);
+            // Fallback to loading indicators
+            document.getElementById('totalMatches').textContent = '-';
+            document.getElementById('activeUsers').textContent = '-';
+            document.getElementById('totalTokens').textContent = '-';
+            document.getElementById('avgResponseTime').textContent = '-';
+        });
+}
+
+// Utility function
+function getTimeAgo(dateString) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+}
+</script>
+{% endblock %}

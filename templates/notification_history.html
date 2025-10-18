@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Notification History - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📜 Notification History</h1>
+    <p>All your past notifications</p>
+    <div style="margin-top: 1rem;">
+        <a href="{{ url_for('my_notifications') }}" class="btn btn-primary">
+            <i class="fas fa-bell"></i> Current Notifications
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    {% if notifications %}
+        <h2>All Notifications ({{ notifications|length }})</h2>
+        {% set reward_info = {} %}
+        {% for notification in notifications %}
+            {% if notification.title == 'REWARD_INFO' and notification.message.startswith('REWARD_DATA:') %}
+                {% set reward_data = notification.message.replace('REWARD_DATA:', '').split('|') %}
+                {% set _ = reward_info.update({notification.user_email: {'email': reward_data[0], 'name': reward_data[1], 'item': reward_data[2]}}) %}
+            {% endif %}
+        {% endfor %}
+        
+        {% for notification in notifications %}
+        {% if notification.title != 'REWARD_INFO' %}
+        <div class="alert {{ 'alert-read' if notification.is_read else 'alert-unread' }}" style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: between; align-items: start;">
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <h3 style="color: {{ '#78716C' if notification.is_read else '#28a745' }}; margin: 0;">{{ notification.title }}</h3>
+                        {% if notification.is_read %}
+                            <span class="read-badge">✓ Read</span>
+                        {% else %}
+                            <span class="unread-badge">● New</span>
+                        {% endif %}
+                    </div>
+                    <div style="white-space: pre-line; line-height: 1.6; margin: 15px 0;">{{ notification.message }}</div>
+                    
+                    {% if notification.user_email in reward_info and not notification.is_read %}
+                    <div style="margin-top: 15px; text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <a href="#" onclick="giveReward('{{ reward_info[notification.user_email].email }}', '{{ reward_info[notification.user_email].name }}', '{{ reward_info[notification.user_email].item }}', '{{ notification.user_email }}', 'User', this); return false;" 
+                           class="btn btn-secondary">
+                            🎁 Give Reward to {{ reward_info[notification.user_email].name }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <small style="color: #666; font-style: italic;">
+                        📅 Received: {{ notification.created_at }}
+                        {% if notification.is_read %}
+                        | ✓ Read
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="loading">
+            <h2>No Notification History</h2>
+            <p>You don't have any notification history yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="back-button-section">
+    <a href="{{ url_for('user_dashboard') }}" class="back-btn">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.alert-read {
+    background: linear-gradient(135deg, #F5F5F4 0%, #E7E5E4 100%);
+    border: 1px solid #D6D3D1;
+    border-left: 4px solid #78716C;
+    border-radius: 10px;
+    opacity: 0.8;
+}
+
+.alert-unread {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 1px solid #c3e6cb;
+    border-left: 4px solid #28a745;
+    border-radius: 10px;
+}
+
+.read-badge {
+    background: #78716C;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.unread-badge {
+    background: #EF4444;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+</style>
+{% endblock %}

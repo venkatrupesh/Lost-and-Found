@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Admin Dashboard</h1>
+    <p>Manage the Lost & Found system and help reunite items</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <h3>All Reports</h3>
+        <p>View all submitted lost and found reports</p>
+        <button onclick="loadAllReports()" class="btn">Load All Reports</button>
+    </div>
+    
+    <div class="dashboard-card">
+        <h3>Find Matches</h3>
+        <p>Automatically find potential matches between lost and found items</p>
+        <button onclick="findMatches()" class="btn btn-secondary">Find Matches</button>
+    </div>
+</div>
+
+<div class="card">
+    <h2>All Reports</h2>
+    <div id="reports-container">
+        <p class="loading">Click "Load All Reports" to view all submissions</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Potential Matches</h2>
+    <div id="matches-container">
+        <p class="loading">Click "Find Matches" to search for potential matches</p>
+    </div>
+</div>
+
+<script>
+// Show admin dashboard tip
+showAdminDashboardTip();
+</script>
+
+<div class="back-button-section">
+    <a href="{{ url_for('index') }}" class="back-btn">
+        ← Back to Home
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.badge-success {
+    background: #28a745;
+    color: white;
+}
+
+.ai-match {
+    border: 2px solid #667eea;
+    background: linear-gradient(135deg, #f8f9ff, #e8f0ff);
+}
+
+.urgency-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 11px;
+    margin-left: 10px;
+}
+
+.image-match-badge {
+    background: #4caf50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    margin-left: 5px;
+}
+
+.match-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.match-header {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.item-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 15px 0;
+}
+
+.item-details > div {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.loading {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+</style>
+{% endblock %}

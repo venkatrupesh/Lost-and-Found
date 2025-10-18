@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details | Lost & Found Portal</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .item-details-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-searching, .status-unclaimed {
+            background-color: #f0ad4e;
+            color: #fff;
+        }
+
+        .status-found, .status-claimed {
+            background-color: #5cb85c;
+            color: #fff;
+        }
+
+        .item-images {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .item-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .item-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-group {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .notification-section {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .notification-card {
+            background-color: #f9f9f9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .notification-date {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .notification-message {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .notification-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="../../index.html" class="logo">Lost & Found Portal</a>
+            <div class="nav-links">
+                <a href="../../index.html"><i class="fas fa-home"></i> Home</a>
+                <a href="browse.html"><i class="fas fa-search"></i> Browse Items</a>
+                <a href="../dashboard/index.html" class="dashboard-link"><i class="fas fa-gauge"></i> Dashboard <span class="notification-badge" id="notificationsCount">0</span></a>
+                <div class="auth-links">
+                    <a href="../auth/login.html" class="btn btn-outline">Login</a>
+                    <a href="../auth/register.html" class="btn btn-primary">Register</a>
+                </div>
+                <div class="user-menu">
+                    <a href="#" id="logoutBtn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="breadcrumb">
+            <a href="../../index.html">Home</a> &gt;
+            <a href="../dashboard/index.html">Dashboard</a> &gt;
+            <span>Item Details</span>
+        </div>
+
+        <div class="item-details-container" id="itemDetailsContainer">
+            <!-- Item details will be loaded here -->
+        </div>
+
+        <div class="notification-section" id="notificationSection">
+            <h2>Notifications</h2>
+            <div id="notificationsContainer">
+                <!-- Notifications will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 Lost & Found Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/details.js"></script>
+</body>
+</html>

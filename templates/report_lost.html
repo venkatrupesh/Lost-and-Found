@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Report Lost Item - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Report Lost Item</h1>
+    <p>Help us help you find your missing belongings</p>
+</div>
+
+<div class="card">
+    <h2>Lost Item Details</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group" data-icon="👤">
+            <label for="name" data-icon="👤">Your Name *</label>
+            <input type="text" id="name" name="name" required 
+                   value="{{ session.user_name or '' }}">
+        </div>
+        
+        <div class="form-group" data-icon="📧">
+            <label for="email" data-icon="📧">Email Address *</label>
+            <input type="email" id="email" name="email" required 
+                   pattern=".*@(klu\.ac\.in|gmail\.com)$" 
+                   title="Only @klu.ac.in and @gmail.com emails are allowed"
+                   placeholder="yourname@klu.ac.in or yourname@gmail.com"
+                   value="{{ session.user_email or '' }}" readonly>
+        </div>
+        
+        <div class="form-group" data-icon="📱">
+            <label for="phone" data-icon="📱">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" required 
+                   pattern="[6-9][0-9]{9}" 
+                   maxlength="10" 
+                   title="Enter 10-digit mobile number starting with 6-9"
+                   placeholder="9876543210">
+        </div>
+        
+        <div class="form-group" data-icon="🏷️">
+            <label for="item_name" data-icon="🏷️">Item Name *</label>
+            <input type="text" id="item_name" name="item_name" placeholder="e.g., iPhone, Wallet, Keys" required>
+        </div>
+        
+        <div class="form-group" data-icon="📝">
+            <label for="description" data-icon="📝">Detailed Description *</label>
+            <textarea id="description" name="description" rows="4" 
+                placeholder="Describe the item in detail (color, brand, distinctive features, etc.)" required></textarea>
+        </div>
+        
+        <div class="form-group" data-icon="📍">
+            <label for="location" data-icon="📍">Last Known Location *</label>
+            <input type="text" id="location" name="location" 
+                placeholder="Where did you last see the item?" required>
+        </div>
+        
+        <div class="form-group" data-icon="📷">
+            <label for="image" data-icon="📷">Upload Image (Optional)</label>
+            <input type="file" id="image" name="image" accept=".png,.jpg,.jpeg" class="file-input">
+            <div class="file-upload-text">Choose a PNG or JPG image to help identify your item</div>
+        </div>
+        
+        <button type="submit" class="btn">Submit Lost Item Report</button>
+    </form>
+    
+    <!-- Smart Suggestions Panel -->
+    <div id="smartSuggestions" class="smart-panel">
+        <h4>🤖 AI Assistant</h4>
+        <div id="suggestionsList">
+            <p>Start typing in the fields above to get smart suggestions!</p>
+        </div>
+        <div id="motivationalMessage" class="motivational-msg">
+            <p>🌟 Help us help you find your lost item!</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Tips for Better Results</h3>
+    <ul>
+        <li>Provide as much detail as possible about your item</li>
+        <li>Include distinctive features, colors, and brands</li>
+        <li>Be specific about the location where you lost it</li>
+        <li>Check back regularly for potential matches</li>
+    </ul>
+</div>
+
+<div class="back-button-section">
+    <a href="{{ url_for('user_dashboard') }}" class="back-btn">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.smart-panel {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border: 2px solid #2196f3;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    animation: slideIn 0.5s ease;
+}
+
+.smart-panel h4 {
+    color: #1976d2;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.smart-panel ul {
+    list-style: none;
+    padding: 0;
+}
+
+.smart-panel li {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border-left: 3px solid #2196f3;
+    font-size: 14px;
+}
+
+.motivational-msg {
+    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 500;
+    color: #2e7d32;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+// Smart NLP Features
+let suggestionTimeout;
+
+function checkSmartSuggestions() {
+    const itemName = document.getElementById('item_name').value;
+    const description = document.getElementById('description').value;
+    const suggestionsList = document.getElementById('suggestionsList');
+    const motivationalMsg = document.getElementById('motivationalMessage');
+    
+    // Simple client-side suggestions
+    let suggestions = [];
+    
+    if (itemName.length > 2 && description.length > 5) {
+        // Check for color
+        const colors = ['red', 'blue', 'green', 'yellow', 'black', 'white', 'brown', 'gray', 'pink', 'purple', 'orange'];
+        const hasColor = colors.some(color => description.toLowerCase().includes(color));
+        if (!hasColor) {
+            suggestions.push('💡 Consider adding the color of your item for better identification');
+        }
+        
+        // Check for brand
+        const brands = ['apple', 'samsung', 'nike', 'adidas', 'sony', 'hp', 'dell'];
+        const hasBrand = brands.some(brand => description.toLowerCase().includes(brand));
+        if (!hasBrand && ['phone', 'laptop', 'camera', 'watch'].some(item => itemName.toLowerCase().includes(item))) {
+            suggestions.push('💡 Adding the brand name can help identify your item faster');
+        }
+        
+        // Check description length
+        if (description.split(' ').length < 5) {
+            suggestions.push('💡 A more detailed description increases your chances of recovery');
+        }
+        
+        // Display suggestions
+        if (suggestions.length > 0) {
+            let html = '<ul>';
+            suggestions.forEach(suggestion => {
+                html += `<li>${suggestion}</li>`;
+            });
+            html += '</ul>';
+            suggestionsList.innerHTML = html;
+        } else {
+            suggestionsList.innerHTML = '<p>✅ Your description looks great!</p>';
+        }
+        
+        // Motivational messages
+        const messages = [
+            '🌟 Every detail helps us find your item faster!',
+            '🤝 You\'re part of a caring community!',
+            '💫 Your effort makes a difference!',
+            '✨ Together we can reunite you with your item!'
+        ];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        motivationalMsg.innerHTML = `<p>${randomMessage}</p>`;
+    }
+}
+
+function displaySmartSuggestions(data) {
+    const panel = document.getElementById('smartSuggestions');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const motivationalMsg = document.getElementById('motivationalMessage');
+    
+    if (data.suggestions && data.suggestions.length > 0) {
+        let html = '<ul>';
+        data.suggestions.forEach(suggestion => {
+            html += `<li>${suggestion}</li>`;
+        });
+        html += '</ul>';
+        suggestionsList.innerHTML = html;
+        
+        motivationalMsg.innerHTML = `<p>${data.motivational}</p>`;
+        panel.style.display = 'block';
+    } else {
+        motivationalMsg.innerHTML = `<p>${data.motivational || '🌟 Keep up the great work!'}</p>`;
+        suggestionsList.innerHTML = '<p>✅ Your description looks great!</p>';
+        panel.style.display = 'block';
+    }
+}
+
+function showSimpleSuggestion() {
+    const panel = document.getElementById('smartSuggestions');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const motivationalMsg = document.getElementById('motivationalMessage');
+    
+    suggestionsList.innerHTML = '<p>🤖 AI Assistant is analyzing your description...</p>';
+    motivationalMsg.innerHTML = '<p>🌟 You\'re helping build a stronger community!</p>';
+    panel.style.display = 'block';
+}
+
+// Add event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const itemNameField = document.getElementById('item_name');
+    const descriptionField = document.getElementById('description');
+    
+    if (itemNameField && descriptionField) {
+        itemNameField.addEventListener('input', checkSmartSuggestions);
+        descriptionField.addEventListener('input', checkSmartSuggestions);
+        console.log('Event listeners added successfully'); // Debug log
+    } else {
+        console.error('Could not find form fields'); // Debug log
+    }
+});
+</script>
+{% endblock %}

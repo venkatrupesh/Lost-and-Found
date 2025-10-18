@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Lost & Found System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-shield-alt"></i>
+        Admin Dashboard
+    </h1>
+    <p class="page-subtitle">Manage reports, discover matches, and oversee platform operations</p>
+</div>
+
+<!-- Stats Overview -->
+<div class="grid-3">
+    <div class="glass-card">
+        <div class="stat-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>Lost Items</h3>
+        <div class="stat-number" id="lost-count">-</div>
+        <p>Items waiting to be found</p>
+    </div>
+    
+    <div class="glass-card">
+        <div class="stat-icon found">
+            <i class="fas fa-search"></i>
+        </div>
+        <h3>Found Items</h3>
+        <div class="stat-number" id="found-count">-</div>
+        <p>Items ready for pickup</p>
+    </div>
+    
+    <div class="glass-card">
+        <div class="stat-icon matched">
+            <i class="fas fa-handshake"></i>
+        </div>
+        <h3>Matches</h3>
+        <div class="stat-number" id="match-count">-</div>
+        <p>Successful reunions</p>
+    </div>
+</div>
+
+<!-- Admin Controls -->
+<div class="glass-card">
+    <h2><i class="fas fa-cogs"></i> Management Tools</h2>
+    <div class="admin-controls">
+        <button onclick="loadAllReports()" class="btn btn-primary">
+            <i class="fas fa-list"></i>
+            Load All Reports
+        </button>
+        <button onclick="loadUrgentItems()" class="btn btn-warning">
+            <i class="fas fa-exclamation-circle"></i>
+            Urgent Items
+        </button>
+        <button onclick="findAIMatches()" class="btn btn-ai">
+            <i class="fas fa-robot"></i>
+            AI Matching
+        </button>
+        <a href="/clear_all_data" onclick="return confirm('Are you sure? This will delete ALL data!')" class="btn" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white;">
+            <i class="fas fa-trash"></i>
+            Clear All Data
+        </a>
+    </div>
+</div>
+
+<!-- Reports Section -->
+<div class="glass-card">
+    <h2><i class="fas fa-database"></i> Reports Management</h2>
+    <div id="reports-container" class="content-container">
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No Reports Loaded</h3>
+            <p>Click "Load All Reports" to view submitted reports</p>
+        </div>
+    </div>
+</div>
+
+<!-- Matching Section -->
+<div class="glass-card">
+    <h2><i class="fas fa-link"></i> Matching System</h2>
+    <div id="matches-container" class="content-container">
+        <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <h3>No Matches Found</h3>
+            <p>Click "Find Matches" to discover potential item matches</p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Admin Dashboard Specific Styles */
+.admin-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #F59E0B, #F97316);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-ai {
+    background: linear-gradient(135deg, #8B5CF6, #A855F7);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-ai:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Stats Cards */
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #EF4444, #F97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-icon.found {
+    background: linear-gradient(135deg, #22C55E, #14B8A6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-icon.matched {
+    background: linear-gradient(135deg, #2563EB, #3B82F6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0.5rem;
+}
+
+/* Content Containers */
+.content-container {
+    min-height: 300px;
+    max-height: 600px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #64748B;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+/* Back Section */
+.back-section {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .admin-controls {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Load stats on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+});
+
+function loadStats() {
+    fetch('/admin_reports')
+        .then(response => response.json())
+        .then(data => {
+            const lostCount = data.filter(item => item.type === 'lost').length;
+            const foundCount = data.filter(item => item.type === 'found').length;
+            const resolvedCount = data.filter(item => item.status === 'resolved').length;
+            
+            document.getElementById('lost-count').textContent = lostCount;
+            document.getElementById('found-count').textContent = foundCount;
+            document.getElementById('match-count').textContent = resolvedCount;
+        })
+        .catch(error => {
+            console.error('Error loading stats:', error);
+        });
+}
+
+function loadUrgentItems() {
+    const container = document.getElementById('reports-container');
+    container.innerHTML = '<div class="royal-loading"></div>';
+    
+    fetch('/urgent_items')
+        .then(response => response.json())
+        .then(data => {
+            displayUrgentItems(data);
+        })
+        .catch(error => {
+            console.error('Error loading urgent items:', error);
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error Loading Urgent Items</h3></div>';
+        });
+}
+
+function displayUrgentItems(items) {
+    const container = document.getElementById('reports-container');
+    
+    if (items.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-check-circle" style="color: #22C55E;"></i>
+                <h3>No Urgent Items</h3>
+                <p>All items are being handled normally. Great job!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div class="urgent-items-header"><h3><i class="fas fa-exclamation-triangle"></i> Emergency Items Requiring Immediate Attention</h3></div>';
+    
+    items.forEach(item => {
+        const urgencyColor = {
+            'CRITICAL': '#EF4444',
+            'HIGH': '#F97316', 
+            'MEDIUM': '#F59E0B'
+        }[item.urgency_level] || '#6B7280';
+        
+        const imageHtml = item.image_filename ? 
+            `<img src="/static/uploads/${item.image_filename}" alt="Item image" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="showImageModal('/static/uploads/${item.image_filename}')" />` : 
+            '<div style="width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #64748B;"><i class="fas fa-image"></i></div>';
+        
+        html += `
+            <div class="urgent-item-card" style="border-left: 5px solid ${urgencyColor}; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border-radius: 12px; padding: 1.5rem; margin: 1rem 0; transition: all 0.3s ease;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <h4 style="margin: 0; color: #1E293B;">${item.item_name}</h4>
+                            <span style="background: ${urgencyColor}; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                                ${item.urgency_level} - ${item.urgency_score}%
+                            </span>
+                            <span style="background: rgba(59, 130, 246, 0.1); color: #2563EB; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500;">
+                                ${item.type.toUpperCase()}
+                            </span>
+                        </div>
+                        <p style="margin: 0.5rem 0; color: #374151;"><strong>Reporter:</strong> ${item.name} (${item.email})</p>
+                        <p style="margin: 0.5rem 0; color: #374151;"><strong>Phone:</strong> ${item.phone}</p>
+                        <p style="margin: 0.5rem 0; color: #374151;"><strong>Description:</strong> ${item.description}</p>
+                        <p style="margin: 0.5rem 0; color: #374151;"><strong>Location:</strong> ${item.location}</p>
+                        <p style="margin: 0.5rem 0; color: #6B7280; font-size: 0.875rem;"><strong>Reported:</strong> ${new Date(item.date_reported).toLocaleString()} (${item.hours_passed}h ago)</p>
+                    </div>
+                    <div style="flex-shrink: 0;">
+                        ${imageHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Add CSS for urgent items
+const urgentStyles = `
+.urgent-items-header {
+    background: linear-gradient(135deg, #EF4444, #F97316);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.urgent-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.royal-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-size: 1.5rem;
+    color: #64748B;
+}
+`;
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = urgentStyles;
+document.head.appendChild(styleSheet);
+</script>
+{% endblock %}

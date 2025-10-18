@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}AR Item Scanner - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>🔍 AR Item Scanner</h1>
+    <p>Use your camera to identify items quickly</p>
+</div>
+
+<div class="card">
+    <div class="scanner-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        
+        <div class="scanner-overlay">
+            <div class="scan-frame"></div>
+            <div class="scan-instructions">
+                <p>📱 Point camera at the item</p>
+                <p>🎯 Keep item in the frame</p>
+            </div>
+        </div>
+        
+        <div class="scanner-controls">
+            <button id="startScan" class="btn">Start Scanner</button>
+            <button id="captureBtn" class="btn btn-secondary" disabled>Capture & Analyze</button>
+            <button id="stopScan" class="btn" style="display: none;">Stop Scanner</button>
+        </div>
+    </div>
+    
+    <div id="scanResults" class="scan-results" style="display: none;">
+        <h3>🤖 AI Analysis Results</h3>
+        <div id="resultContent"></div>
+        <div class="result-actions">
+            <button onclick="reportFromScan()" class="btn">Report This Item</button>
+            <button onclick="scanAgain()" class="btn btn-secondary">Scan Again</button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>💡 How AR Scanner Works</h3>
+    <ul>
+        <li>📷 Uses your device camera to capture item images</li>
+        <li>🤖 AI analyzes visual features and text</li>
+        <li>🎯 Suggests item type and characteristics</li>
+        <li>⚡ Quick reporting with pre-filled details</li>
+    </ul>
+</div>
+
+<div class="back-button-section">
+    <a href="{{ url_for('user_dashboard') }}" class="back-btn">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.scanner-container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+#video {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.scan-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 3px solid #00bfa5;
+    border-radius: 15px;
+    animation: scanPulse 2s infinite;
+}
+
+@keyframes scanPulse {
+    0%, 100% { border-color: #00bfa5; box-shadow: 0 0 0 0 rgba(0, 191, 165, 0.7); }
+    50% { border-color: #4caf50; box-shadow: 0 0 0 10px rgba(0, 191, 165, 0); }
+}
+
+.scan-instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+.scanner-controls {
+    text-align: center;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+.scanner-controls button {
+    margin: 5px;
+}
+
+.scan-results {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    animation: slideIn 0.5s ease;
+}
+
+.result-actions {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.result-actions button {
+    margin: 5px;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.confidence-bar {
+    background: #e0e0e0;
+    height: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff5722, #ff9800, #4caf50);
+    transition: width 0.3s ease;
+}
+</style>
+
+<script>
+let video, canvas, ctx;
+let scanning = false;
+let scanData = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    video = document.getElementById('video');
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+    
+    document.getElementById('startScan').addEventListener('click', startScanner);
+    document.getElementById('captureBtn').addEventListener('click', captureAndAnalyze);
+    document.getElementById('stopScan').addEventListener('click', stopScanner);
+});
+
+async function startScanner() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment' } 
+        });
+        video.srcObject = stream;
+        scanning = true;
+        
+        document.getElementById('startScan').style.display = 'none';
+        document.getElementById('captureBtn').disabled = false;
+        document.getElementById('stopScan').style.display = 'inline-block';
+        
+        // Auto-capture after 3 seconds
+        setTimeout(() => {
+            if (scanning) captureAndAnalyze();
+        }, 3000);
+        
+    } catch (err) {
+        alert('Camera access denied. Please allow camera permissions.');
+        console.error('Camera error:', err);
+    }
+}
+
+function stopScanner() {
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    scanning = false;
+    
+    document.getElementById('startScan').style.display = 'inline-block';
+    document.getElementById('captureBtn').disabled = true;
+    document.getElementById('stopScan').style.display = 'none';
+}
+
+function captureAndAnalyze() {
+    if (!scanning) return;
+    
+    // Capture frame
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    
+    // Simulate AI analysis (in real app, this would process the image)
+    const mockAnalysis = simulateAIAnalysis();
+    displayResults(mockAnalysis);
+    
+    stopScanner();
+}
+
+function simulateAIAnalysis() {
+    // Mock AI analysis results
+    const itemTypes = [
+        { type: 'Phone', confidence: 85, suggestions: ['📱 Smartphone detected', '🔋 Check for brand markings'] },
+        { type: 'Wallet', confidence: 78, suggestions: ['💳 Leather wallet', '🆔 Look for ID cards inside'] },
+        { type: 'Keys', confidence: 92, suggestions: ['🔑 Key set detected', '🏠 House and car keys visible'] },
+        { type: 'Bag', confidence: 67, suggestions: ['🎒 Backpack or handbag', '👜 Check pockets for items'] }
+    ];
+    
+    return itemTypes[Math.floor(Math.random() * itemTypes.length)];
+}
+
+function displayResults(analysis) {
+    scanData = analysis;
+    
+    const resultContent = document.getElementById('resultContent');
+    resultContent.innerHTML = `
+        <div class="analysis-result">
+            <h4>🎯 Detected: ${analysis.type}</h4>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: ${analysis.confidence}%"></div>
+            </div>
+            <p>Confidence: ${analysis.confidence}%</p>
+            
+            <div class="ai-suggestions">
+                <h5>💡 AI Suggestions:</h5>
+                <ul>
+                    ${analysis.suggestions.map(s => `<li>${s}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('scanResults').style.display = 'block';
+}
+
+function reportFromScan() {
+    // Pre-fill report form with scan data
+    const itemName = scanData.type || 'Scanned Item';
+    const description = `AI-scanned ${scanData.type} with ${scanData.confidence}% confidence. ${scanData.suggestions.join('. ')}`;
+    
+    // Redirect to report form with pre-filled data
+    const params = new URLSearchParams({
+        item_name: itemName,
+        description: description,
+        source: 'ar_scan'
+    });
+    
+    window.location.href = `/report_found?${params.toString()}`;
+}
+
+function scanAgain() {
+    document.getElementById('scanResults').style.display = 'none';
+    startScanner();
+}
+
+// Add visual feedback
+function addScanEffect() {
+    const frame = document.querySelector('.scan-frame');
+    frame.style.borderColor = '#4caf50';
+    frame.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.8)';
+    
+    setTimeout(() => {
+        frame.style.borderColor = '#00bfa5';
+        frame.style.boxShadow = 'none';
+    }, 500);
+}
+</script>
+{% endblock %}

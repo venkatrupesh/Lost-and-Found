@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}My Notifications - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📧 My Notifications</h1>
+    <p>Stay updated on your lost item matches</p>
+    <div style="margin-top: 1rem;">
+        <a href="{{ url_for('notification_history') }}" class="btn" style="background: linear-gradient(135deg, #78716C, #57534E); color: white;">
+            <i class="fas fa-history"></i> View History
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    {% if notifications %}
+        <h2>Your Notifications ({{ notifications|length }})</h2>
+        {% set reward_info = {} %}
+        {% for notification in notifications %}
+            {% if notification.title == 'REWARD_INFO' and notification.message.startswith('REWARD_DATA:') %}
+                {% set reward_data = notification.message.replace('REWARD_DATA:', '').split('|') %}
+                {% set _ = reward_info.update({notification.user_email: {'email': reward_data[0], 'name': reward_data[1], 'item': reward_data[2]}}) %}
+            {% endif %}
+        {% endfor %}
+        
+        {% for notification in notifications %}
+        {% if notification.title != 'REWARD_INFO' %}
+        <div class="alert alert-success" style="margin-bottom: 20px; border-left: 4px solid #28a745;" onclick="markNotificationAsRead({{ notification.id }})">
+            <div style="display: flex; justify-content: between; align-items: start;">
+                <div style="flex: 1;">
+                    <h3 style="color: #28a745; margin-bottom: 10px;">{{ notification.title }}</h3>
+                    <div style="white-space: pre-line; line-height: 1.6; margin: 15px 0;">{{ notification.message }}</div>
+                    
+                    {% if notification.user_email in reward_info %}
+                    <div style="margin-top: 15px; text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <a href="#" onclick="giveReward('{{ reward_info[notification.user_email].email }}', '{{ reward_info[notification.user_email].name }}', '{{ reward_info[notification.user_email].item }}', '{{ notification.user_email }}', 'User'); return false;" 
+                           class="btn btn-secondary">
+                            🎁 Give Reward to {{ reward_info[notification.user_email].name }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <small style="color: #666; font-style: italic;">
+                        📅 Received: {{ notification.created_at }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="loading">
+            <h2>No Notifications</h2>
+            <p>You don't have any notifications yet.</p>
+            <p>When someone finds your lost item, you'll receive a notification here with their contact details.</p>
+            <div style="margin-top: 20px;">
+                <a href="{{ url_for('report_lost') }}" class="btn">Report Lost Item</a>
+                <a href="{{ url_for('my_reports') }}?email={{ user_email }}" class="btn btn-secondary">View My Reports</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if notifications %}
+<div class="card">
+    <h3>💡 What to do next?</h3>
+    <ul style="line-height: 1.8;">
+        <li><strong>Contact the finder</strong> using the phone number or email provided</li>
+        <li><strong>Arrange a meeting</strong> in a safe, public location</li>
+        <li><strong>Verify the item</strong> matches your lost item description</li>
+        <li><strong>Thank the finder</strong> for their honesty and help!</li>
+    </ul>
+</div>
+
+<script>
+// Show notification tip
+showNotificationTip();
+</script>
+{% endif %}
+
+<div class="back-button-section">
+    <a href="{{ url_for('user_dashboard') }}" class="back-btn">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 1px solid #c3e6cb;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.1);
+}
+
+.alert-success h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+
+</style>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Verification Code{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>📧 Enter Verification Code</h2>
+        <p>We've sent a 6-digit verification code to your email address.</p>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="otp">Verification Code:</label>
+                <input type="text" id="otp" name="otp" required 
+                       maxlength="6" minlength="6"
+                       pattern="[0-9]{6}"
+                       placeholder="Enter 6-digit code"
+                       style="text-align: center; font-size: 24px; letter-spacing: 5px;">
+            </div>
+            
+            <button type="submit" class="btn">Verify Code</button>
+        </form>
+        
+        <div class="help-text">
+            <p>⏰ Code expires in 1 hour</p>
+            <p>📧 Check your spam folder if you don't see the email</p>
+            <a href="{{ url_for('auth.verify_email') }}">← Send new code</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.help-text {
+    text-align: center;
+    margin-top: 20px;
+    color: #6c757d;
+}
+
+.help-text p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.help-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.help-text a:hover {
+    text-decoration: underline;
+}
+
+#otp {
+    font-family: 'Courier New', monospace;
+}
+</style>
+
+<script>
+// Auto-submit when 6 digits entered
+document.getElementById('otp').addEventListener('input', function(e) {
+    if (e.target.value.length === 6) {
+        e.target.form.submit();
+    }
+});
+
+// Only allow numbers
+document.getElementById('otp').addEventListener('keypress', function(e) {
+    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace') {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

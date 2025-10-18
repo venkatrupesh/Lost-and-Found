@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}My Reports - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>My Reports</h1>
+    <p>Track all your submitted lost and found reports</p>
+</div>
+
+<div class="card">
+    <h2>📋 Your Submitted Reports</h2>
+    
+    {% if reports %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Type</th>
+                    <th>Item Name</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Date Reported</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.id }}</td>
+                    <td>
+                        <span class="badge {% if report.type == 'lost' %}badge-danger{% else %}badge-success{% endif %}">
+                            {{ report.type|title }}
+                        </span>
+                    </td>
+                    <td>{{ report.item_name }}</td>
+                    <td>{{ report.description[:50] }}{% if report.description|length > 50 %}...{% endif %}</td>
+                    <td>{{ report.location }}</td>
+                    <td>{{ report.date_reported }}</td>
+                    <td>
+                        <span class="badge {% if report.status == 'active' %}badge-warning{% else %}badge-info{% endif %}">
+                            {{ report.status|title }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="loading">
+            <p>No reports found for this email address.</p>
+            <p>Submit your first report!</p>
+            <div style="margin-top: 20px;">
+                <a href="{{ url_for('report_lost') }}" class="btn">Report Lost Item</a>
+                <a href="{{ url_for('report_found') }}" class="btn btn-secondary">Report Found Item</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if reports %}
+<div class="card">
+    <h3>Report Statistics</h3>
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <h4>Total Reports</h4>
+            <p style="font-size: 2rem; color: #667eea;">{{ reports|length }}</p>
+        </div>
+        <div class="dashboard-card">
+            <h4>Lost Items</h4>
+            <p style="font-size: 2rem; color: #dc3545;">{{ reports|selectattr('type', 'equalto', 'lost')|list|length }}</p>
+        </div>
+        <div class="dashboard-card">
+            <h4>Found Items</h4>
+            <p style="font-size: 2rem; color: #28a745;">{{ reports|selectattr('type', 'equalto', 'found')|list|length }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<style>
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.badge-success {
+    background: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.badge-info {
+    background: #17a2b8;
+    color: white;
+}
+</style>
+
+<div class="back-button-section">
+    <a href="{{ url_for('user_dashboard') }}" class="back-btn">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}

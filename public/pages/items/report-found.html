@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Found Item - Lost & Found</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 100px 0 60px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto 80px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        .form-header {
+            background-color: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .form-body {
+            padding: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: var(--dark-color);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+        
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 15px;
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 111, 165, 0.05);
+        }
+        
+        .image-upload i {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .image-upload p {
+            margin: 0;
+            color: #6c757d;
+        }
+        
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .storage-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .storage-option input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="../../index.html" class="logo">Lost & Found</a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="browse.html">Browse Items</a>
+                <a href="report-lost.html">Report Lost</a>
+                <a href="report-found.html" class="active">Report Found</a>
+                <a href="../dashboard/index.html" class="dashboard-link auth-required" style="display: none;">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <div class="guest-only">
+                    <a href="../auth/login.html" class="btn btn-outline">Login</a>
+                    <a href="../auth/register.html" class="btn btn-primary">Register</a>
+                </div>
+            </div>
+            <button class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Report a Found Item</h1>
+            <p>Help reunite lost items with their owners by reporting what you've found. Fill out the form below with as much detail as possible.</p>
+        </div>
+    </header>
+
+    <!-- Main Form -->
+    <div class="container">
+        <form id="foundItemForm" class="form-container" onsubmit="return handleFoundItemSubmission(event)">
+            <div class="form-header">
+                <h2>Item Details</h2>
+            </div>
+            
+            <div class="form-body">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemName">Item Name *</label>
+                            <input type="text" id="itemName" class="form-control" placeholder="e.g., iPhone 13, Black Wallet, etc." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <select id="category" class="form-control" required>
+                                <option value="" disabled selected>Select a category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="accessories">Accessories</option>
+                                <option value="documents">Documents</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="bags">Bags & Wallets</option>
+                                <option value="keys">Keys</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" class="form-control" placeholder="Provide a detailed description of the item including brand, color, size, and any distinguishing features." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="condition">Condition</label>
+                        <select id="condition" class="form-control">
+                            <option value="" disabled selected>Select condition</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                            <option value="damaged">Damaged</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>When & Where</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="foundDate">Date Found *</label>
+                            <input type="date" id="foundDate" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foundTime">Approximate Time</label>
+                            <input type="time" id="foundTime" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location Where Found *</label>
+                        <input type="text" id="location" class="form-control" placeholder="e.g., Main Building, Room 101, Near the cafeteria" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="campus">Campus/Building *</label>
+                        <select id="campus" class="form-control" required>
+                            <option value="" disabled selected>Select a campus or building</option>
+                            <option value="main">Main Campus</option>
+                            <option value="north">North Campus</option>
+                            <option value="south">South Campus</option>
+                            <option value="library">University Library</option>
+                            <option value="student-center">Student Center</option>
+                            <option value="sports-complex">Sports Complex</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Current Status</h3>
+                    
+                    <div class="storage-option">
+                        <input type="radio" id="keepingItem" name="itemStatus" value="keeping" checked>
+                        <label for="keepingItem">I'm keeping the item until the owner is found</label>
+                    </div>
+                    
+                    <div class="storage-option">
+                        <input type="radio" id="turnedInItem" name="itemStatus" value="turned-in">
+                        <label for="turnedInItem">I've turned the item in to Lost & Found office</label>
+                    </div>
+                    
+                    <div class="storage-option">
+                        <input type="radio" id="otherStatus" name="itemStatus" value="other">
+                        <label for="otherStatus">Other (please specify)</label>
+                    </div>
+                    
+                    <div class="form-group" id="otherStatusContainer" style="display: none;">
+                        <textarea id="otherStatusText" class="form-control" placeholder="Please specify the current status of the item"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Upload Photos</h3>
+                    <p>Upload clear photos of the found item (max 5 photos, 5MB each)</p>
+                    
+                    <div class="image-upload" id="imageUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click or drag & drop to upload photos</p>
+                        <input type="file" id="itemImages" accept="image/*" multiple style="display: none;">
+                    </div>
+                    
+                    <div class="image-preview" id="imagePreview"></div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Contact Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Your Name *</label>
+                            <input type="text" id="fullName" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="alternateContact">Alternate Contact (Optional)</label>
+                            <input type="text" id="alternateContact" class="form-control" placeholder="Name and number of someone who can reach you">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="termsAgreement" required>
+                            <span>I confirm that the information provided is accurate to the best of my knowledge. *</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <span>Notify me via email when there are updates about this found item</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Lost & Found</h3>
+                    <p>Helping people reunite with their lost belongings since 2023.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="browse.html">Browse Items</a></li>
+                        <li><a href="report-lost.html">Report Lost</a></li>
+                        <li><a href="report-found.html">Report Found</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Lost & Found. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script>
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('foundDate').value = today;
+            
+            // Set default time to current time
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('foundTime').value = `${hours}:${minutes}`;
+            
+            // Status toggle
+            const otherStatus = document.getElementById('otherStatus');
+            const otherStatusContainer = document.getElementById('otherStatusContainer');
+            
+            if (otherStatus && otherStatusContainer) {
+                otherStatus.addEventListener('change', function() {
+                    if (this.checked) {
+                        otherStatusContainer.style.display = 'block';
+                    }
+                });
+                
+                document.getElementById('keepingItem').addEventListener('change', function() {
+                    if (this.checked) {
+                        otherStatusContainer.style.display = 'none';
+                        document.getElementById('otherStatusText').value = '';
+                    }
+                });
+                
+                document.getElementById('turnedInItem').addEventListener('change', function() {
+                    if (this.checked) {
+                        otherStatusContainer.style.display = 'none';
+                        document.getElementById('otherStatusText').value = '';
+                    }
+                });
+            }
+            
+            // Image upload preview
+            const imageUpload = document.getElementById('imageUpload');
+            const imageInput = document.getElementById('itemImages');
+            const imagePreview = document.getElementById('imagePreview');
+            const maxFiles = 5;
+            let files = [];
+            
+            if (imageUpload && imageInput) {
+                // Click on the hidden file input when the upload area is clicked
+                imageUpload.addEventListener('click', function() {
+                    imageInput.click();
+                });
+                
+                // Handle drag and drop
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    imageUpload.addEventListener(eventName, preventDefaults, false);
+                });
+                
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                // Highlight drop area when item is dragged over it
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    imageUpload.addEventListener(eventName, highlight, false);
+                });
+                
+                ['dragleave', 'drop'].forEach(eventName => {
+                    imageUpload.addEventListener(eventName, unhighlight, false);
+                });
+                
+                function highlight() {
+                    imageUpload.style.borderColor = 'var(--primary-color)';
+                    imageUpload.style.backgroundColor = 'rgba(74, 111, 165, 0.1)';
+                }
+                
+                function unhighlight() {
+                    imageUpload.style.borderColor = '#ddd';
+                    imageUpload.style.backgroundColor = 'transparent';
+                }
+                
+                // Handle dropped files
+                imageUpload.addEventListener('drop', handleDrop, false);
+                
+                function handleDrop(e) {
+                    const dt = e.dataTransfer;
+                    const droppedFiles = dt.files;
+                    handleFiles(droppedFiles);
+                }
+                
+                // Handle selected files
+                imageInput.addEventListener('change', function() {
+                    handleFiles(this.files);
+                });
+                
+                function handleFiles(selectedFiles) {
+                    if (files.length + selectedFiles.length > maxFiles) {
+                        alert(`You can upload a maximum of ${maxFiles} images.`);
+                        return;
+                    }
+                    
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        const file = selectedFiles[i];
+                        
+                        // Check if file is an image
+                        if (!file.type.match('image.*')) {
+                            alert('Only image files are allowed.');
+                            continue;
+                        }
+                        
+                        // Check file size (5MB max)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('Image size should be less than 5MB.');
+                            continue;
+                        }
+                        
+                        files.push(file);
+                        
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'preview-item';
+                            previewItem.innerHTML = `
+                                <img src="${e.target.result}" alt="${file.name}">
+                                <div class="remove-image" data-index="${files.length - 1}">&times;</div>
+                            `;
+                            imagePreview.appendChild(previewItem);
+                            
+                            // Add event listener to remove button
+                            const removeBtn = previewItem.querySelector('.remove-image');
+                            removeBtn.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                const index = parseInt(this.getAttribute('data-index'));
+                                files.splice(index, 1);
+                                previewItem.remove();
+                                updatePreviewIndices();
+                            });
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                    
+                    // Reset file input to allow selecting the same file again if needed
+                    imageInput.value = '';
+                }
+                
+                function updatePreviewIndices() {
+                    const removeButtons = document.querySelectorAll('.remove-image');
+                    removeButtons.forEach((btn, index) => {
+                        btn.setAttribute('data-index', index);
+                    });
+                }
+            }
+            
+            // Initialize phone input mask
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+                    e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+                });
+            }
+            
+            // Check if user is logged in and pre-fill their information
+            const user = JSON.parse(localStorage.getItem('userData') || '{}');
+            if (user) {
+                if (user.fullName) document.getElementById('fullName').value = user.fullName;
+                if (user.email) document.getElementById('email').value = user.email;
+                if (user.phone) document.getElementById('phone').value = user.phone;
+            }
+        });
+        
+        // Handle form submission
+        function handleFoundItemSubmission(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const itemName = document.getElementById('itemName').value.trim();
+            const category = document.getElementById('category').value;
+            const description = document.getElementById('description').value.trim();
+            const foundDate = document.getElementById('foundDate').value;
+            const location = document.getElementById('location').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Basic validation
+            if (!itemName || !category || !description || !foundDate || !location || !fullName || !email || !phone) {
+                alert('Please fill in all required fields');
+                return false;
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return false;
+            }
+            
+            // Get current user
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('You must be logged in to report a found item');
+                window.location.href = '../auth/login.html';
+                return false;
+            }
+            
+            // Get item status
+            let itemStatus = document.querySelector('input[name="itemStatus"]:checked').value;
+            if (itemStatus === 'other') {
+                const otherStatusText = document.getElementById('otherStatusText').value.trim();
+                if (!otherStatusText) {
+                    alert('Please specify the current status of the item');
+                    return false;
+                }
+                itemStatus = otherStatusText;
+            }
+            
+            // Create found item object
+            const foundItem = {
+                id: 'item-' + Date.now(),
+                userId: currentUser.id,
+                type: 'found',
+                status: 'reported',
+                itemName: itemName,
+                category: category,
+                description: description,
+                location: location,
+                dateFound: foundDate,
+                dateReported: new Date().toISOString(),
+                itemStatus: itemStatus,
+                contactInfo: {
+                    name: fullName,
+                    email: email,
+                    phone: phone
+                },
+                // Get all image previews or empty array if none
+                images: Array.from(document.querySelectorAll('.image-preview img')).map(img => img.src),
+                createdAt: new Date().toISOString()
+            };
+
+            // Save to localStorage in the same key as lost reports for admin dashboard visibility
+            let reports = JSON.parse(localStorage.getItem('lostFoundReports') || '[]');
+            const report = {
+                id: foundItem.id,
+                title: foundItem.itemName,
+                category: foundItem.category,
+                description: foundItem.description,
+                date: foundItem.dateFound,
+                location: foundItem.location,
+                type: 'found',
+                contact_info: {
+                    full_name: foundItem.contactInfo.name,
+                    email: foundItem.contactInfo.email,
+                    phone: foundItem.contactInfo.phone
+                }
+            };
+            reports.push(report);
+            localStorage.setItem('lostFoundReports', JSON.stringify(reports));
+            
+            // Show success message
+            alert('Your found item report has been submitted successfully!');
+            
+            // Redirect to dashboard after 1.5 seconds
+            setTimeout(() => {
+                window.location.href = '../dashboard/index.html';
+            }, 1500);
+            
+            return false;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items - KLU Lost & Found</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="../../css/theme.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Page specific styles */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 6rem 0 4rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('https://www.kluniversity.in/images/slider/slider2.jpg') center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 1;
+        }
+
+        .page-header .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        /* Search and Filter Section */
+        .search-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            animation: slideInUp 0.6s ease 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .item-card:nth-child(1) { animation-delay: 0.1s; }
+        .item-card:nth-child(2) { animation-delay: 0.2s; }
+        .item-card:nth-child(3) { animation-delay: 0.3s; }
+        .item-card:nth-child(4) { animation-delay: 0.4s; }
+        .item-card:nth-child(5) { animation-delay: 0.5s; }
+        .item-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .item-details {
+            padding: 1.5rem;
+        }
+
+        .item-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .item-category.found {
+            background: var(--success);
+        }
+
+        .item-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .item-description {
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .item-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            grid-column: 1 / -1;
+        }
+
+        .no-items i {
+            font-size: 4rem;
+            color: var(--light-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .no-items h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .no-items p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Admin Messages Section */
+        .admin-messages-section {
+            margin-bottom: 2rem;
+        }
+
+        .admin-messages {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-message {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ffeeba;
+        }
+
+        .admin-message:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: #856404;
+        }
+
+        .message-time {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .message-content {
+            color: #856404;
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+
+            .filter-options {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Admin Messages Button */
+        .admin-messages-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .admin-messages-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-messages-btn .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+
+        /* Admin Messages Panel */
+        .admin-messages-panel {
+            position: fixed;
+            bottom: 100px;
+            right: -400px;
+            width: 350px;
+            max-width: 90%;
+            height: 500px;
+            max-height: 70vh;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .admin-messages-panel.show {
+            right: 30px;
+        }
+
+        .messages-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .messages-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-messages {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .close-messages:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .message-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--primary-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .message-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-item.unread {
+            background: #ebf8ff;
+            border-left-color: #3182ce;
+        }
+
+        .message-title {
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            color: #1a202c;
+        }
+
+        .message-content {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin: 0 0 8px 0;
+            line-height: 1.5;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .message-time {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .no-messages {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../../index.html" class="logo">
+                <i class="fas fa-search-location"></i>
+                <span>KLU Lost & Found</span>
+            </a>
+            <div class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="browse.html" class="active">Browse Items</a>
+                <a href="report-lost.html">Report Lost</a>
+                <a href="report-found.html">Report Found</a>
+                <a href="../dashboard/" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">Browse Lost & Found Items</h1>
+            <p class="page-subtitle">Find your lost items or help others find theirs</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+    <!-- Admin Messages Section -->
+    <section class="admin-messages-section" style="margin-bottom: 2rem; position: relative;">
+        <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-bullhorn"></i> Important Announcements
+        </h2>
+        <div class="admin-messages" id="adminMessagesList" style="background: linear-gradient(135deg, #fef3c7, #fcd34d); border-left: 6px solid #fbbf24; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3); font-family: 'Poppins', sans-serif;">
+            <!-- Admin messages will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Match Found Messages Section -->
+    <section class="match-found-section" style="margin-bottom: 2rem; position: relative;">
+        <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-handshake"></i> Match Found Messages
+        </h2>
+        <div class="match-messages" id="matchMessagesList" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-left: 6px solid #22c55e; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3); font-family: 'Poppins', sans-serif;">
+            <!-- Match messages will be loaded here -->
+        </div>
+    </section>
+    </main>
+
+    <!-- Admin Messages Button -->
+    <button class="admin-messages-btn" id="messagesBtn">
+        <i class="fas fa-envelope fa-lg"></i>
+        <span class="badge" id="unreadCount">3</span>
+    </button>
+
+    <!-- Admin Messages Panel -->
+    <div class="admin-messages-panel" id="messagesPanel">
+        <div class="messages-header">
+            <h3><i class="fas fa-envelope-open-text"></i> Admin Messages</h3>
+            <button class="close-messages" id="closeMessages">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="messages-list" id="messagesList">
+            <!-- Messages will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>KLU Lost & Found</h4>
+                    <p>Helping the KLU community reunite with their lost items since 2023.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="browse.html">Browse Items</a></li>
+                        <li><a href="report-lost.html">Report Lost Item</a></li>
+                        <li><a href="report-found.html">Report Found Item</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> lostandfound@kluniversity.in</p>
+                    <p><i class="fas fa-phone"></i> +91 1234567890</p>
+                    <p><i class="fas fa-map-marker-alt"></i> KL University, Vaddeswaram, AP</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 KL University Lost & Found. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Load admin messages from localStorage and display
+        function loadAdminMessages() {
+            const messages = JSON.parse(localStorage.getItem('adminMessages') || '[]');
+            return messages;
+        }
+
+        function displayAdminMessages() {
+            const container = document.getElementById('adminMessagesList');
+            const messages = loadAdminMessages();
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="no-messages" style="padding: 40px 20px; text-align: center; color: #a0aec0; font-family: 'Poppins', sans-serif;">
+                        <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #fbbf24;"></i>
+                        <h3 style="font-weight: 600; font-size: 1.25rem; margin-bottom: 0.5rem;">No Announcements Yet</h3>
+                        <p style="font-size: 1rem; color: #718096;">Stay tuned for important updates and announcements from the admin.</p>
+                    </div>
+                `;
+                return;
+            }
+            // Filter messages to only include those with category 'general' or 'urgent' or 'lost' or 'found' (all admin messages)
+            const filteredMessages = messages.filter(msg => ['general', 'urgent', 'lost', 'found'].includes(msg.category));
+            const html = filteredMessages.map((msg, index) => `
+                <div class="admin-message" style="background: white; border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: fadeInUp 0.5s ease forwards; animation-delay: ${index * 0.15}s; opacity: 0; transform: translateY(20px); font-family: 'Poppins', sans-serif;">
+                    <div class="message-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span class="message-sender" style="font-weight: 700; color: #1a365d; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-user-shield" style="color: #d4af37;"></i> Admin
+                        </span>
+                        <span class="message-time" style="font-size: 0.85rem; color: #718096;">
+                            ${new Date(msg.date).toLocaleDateString()}
+                        </span>
+                    </div>
+                    <div class="message-title" style="font-weight: 700; font-size: 1.1rem; color: #2d3748; margin-bottom: 0.25rem;">
+                        ${msg.title}
+                    </div>
+                    <div class="message-meta" style="display: flex; gap: 1rem; font-size: 0.85rem; color: #718096; margin-bottom: 0.75rem;">
+                        <div><strong>Audience:</strong> ${msg.audience === 'all' ? 'All Users' : msg.specificEmail || 'Specific Email'}</div>
+                        <div><strong>Category:</strong> ${msg.category.charAt(0).toUpperCase() + msg.category.slice(1)}</div>
+                        <div><strong>Priority:</strong> ${msg.priority.charAt(0).toUpperCase() + msg.priority.slice(1)}</div>
+                    </div>
+                    <div class="message-content" style="color: #4a5568; font-size: 1rem; line-height: 1.5;">
+                        ${msg.content}
+                    </div>
+                </div>
+            `).join('');
+            container.innerHTML = html;
+        }
+
+        // Load private match messages for current user and display in message panel
+        function loadPrivateMatchMessages(userEmail) {
+            const allMessages = JSON.parse(localStorage.getItem('userMessages') || '{}');
+            return allMessages[userEmail] || [];
+        }
+
+        function displayPrivateMatchMessages(userEmail) {
+            const messages = loadPrivateMatchMessages(userEmail);
+            const container = document.getElementById('matchMessagesList');
+            if (!messages.length) {
+                container.innerHTML = '<div class="no-messages">No match found messages.</div>';
+                return;
+            }
+            const html = messages.map((msg, index) => `
+                <div class="match-message" style="animation-delay: ${index * 0.1}s;">
+                    <div class="message-title">${msg.title}</div>
+                    <div class="message-content">${msg.content}</div>
+                    <div class="message-meta">
+                        <div>${new Date(msg.date).toLocaleString()}</div>
+                    </div>
+                </div>
+            `).join('');
+            container.innerHTML = html;
+        }
+
+        // Toggle message panel visibility
+        const messagesBtn = document.getElementById('messagesBtn');
+        const messagesPanel = document.getElementById('messagesPanel');
+        const closeMessagesBtn = document.getElementById('closeMessages');
+
+        messagesBtn.addEventListener('click', () => {
+            messagesPanel.classList.toggle('show');
+        });
+
+        closeMessagesBtn.addEventListener('click', () => {
+            messagesPanel.classList.remove('show');
+        });
+
+        // On page load, display admin messages and private messages for current user
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        displayAdminMessages();
+        if (currentUser.email) {
+            displayPrivateMatchMessages(currentUser.email);
+        }
+    });
+</script>
+
+        // Toggle message panel visibility
+        const messagesBtn = document.getElementById('messagesBtn');
+        const messagesPanel = document.getElementById('messagesPanel');
+        const closeMessagesBtn = document.getElementById('closeMessages');
+
+        messagesBtn.addEventListener('click', () => {
+            messagesPanel.classList.toggle('show');
+        });
+
+        closeMessagesBtn.addEventListener('click', () => {
+            messagesPanel.classList.remove('show');
+        });
+
+        // On page load, display admin messages and private messages for current user
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        displayAdminMessages();
+        if (currentUser.email) {
+            displayPrivateMatchMessages(currentUser.email);
+        }
+
+            displayAdminMessages();
+
+            // Floating elements animation
+            const container = document.querySelector('.admin-messages-section');
+            if (container) {
+                for (let i = 0; i < 5; i++) {
+                    const floatElem = document.createElement('div');
+                    floatElem.className = 'floating-icon';
+                    floatElem.style.left = `${Math.random() * 90 + 5}%`;
+                    floatElem.style.top = `${Math.random() * 80 + 10}%`;
+                    container.appendChild(floatElem);
+                }
+            }
+        });
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .floating-icon {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color, #1a365d);
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: floatUpDown 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .floating-icon:nth-child(odd) {
+            animation-delay: 0s;
+        }
+        .floating-icon:nth-child(even) {
+            animation-delay: 2s;
+        }
+        @keyframes floatUpDown {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+        .admin-messages-section {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</body>
+</html>

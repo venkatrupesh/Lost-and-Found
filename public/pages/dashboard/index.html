@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - KLU Lost & Found</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover, 
+        .nav-links a.active {
+            color: white;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: white;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Welcome Section */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem 2.5rem;
+            border-radius: 16px;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .welcome-banner h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-banner p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-banner .highlight {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-color);
+            animation: slideIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.2s; }
+        .stat-card:nth-child(2) { animation-delay: 0.4s; }
+        .stat-card:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.lost { border-left-color: var(--warning); }
+        .stat-card.found { border-left-color: var(--success); }
+        .stat-card.resolved { border-left-color: var(--primary-color); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card.lost .stat-icon { background-color: var(--warning); }
+        .stat-card.found .stat-icon { background-color: var(--success); }
+        .stat-card.resolved .stat-icon { background-color: var(--primary-color); }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card.lost .stat-number {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            -webkit-background-clip: text;
+        }
+
+        .stat-card.found .stat-number {
+            background: linear-gradient(135deg, #059669, #10b981);
+            -webkit-background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: var(--success);
+        }
+
+        .stat-change.down { color: var(--danger); }
+
+        /* Recent Activity */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .activity-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .activity-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-card.lost { border-top-color: var(--warning); }
+        .activity-card.found { border-top-color: var(--success); }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .activity-type {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-type.lost {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .activity-type.found {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .activity-desc {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .activity-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--gray);
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .activity-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .btn-action:hover {
+            color: var(--primary-dark);
+        }
+
+        .btn-action.delete {
+            color: var(--danger);
+        }
+
+        .btn-action.delete:hover {
+            color: #dc2626;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .welcome-banner h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation Classes */
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin: 2rem 0;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../../index.html" class="logo">
+                <i class="fas fa-search-location"></i>
+                <span>KLU Lost & Found</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="active">Dashboard</a>
+                <a href="../items/browse.html">Browse Items</a>
+                <a href="../items/report-lost.html">Report Lost</a>
+                <a href="../items/report-found.html">Report Found</a>
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <main class="dashboard">
+        <!-- Welcome Banner -->
+        <section class="welcome-banner">
+            <h1>Welcome back, <span id="userFullName">User</span>! 👋</h1>
+            <p>Here's an overview of your lost and found items. You can track your reports and see updates in real-time.</p>
+            <div class="banner-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <a href="../items/report-lost.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Report Lost Item
+                </a>
+                <a href="../items/report-found.html" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">
+                    <i class="fas fa-hand-holding-heart"></i> Report Found Item
+                </a>
+            </div>
+            
+            <!-- Decorative Elements -->
+            <div style="position: absolute; top: 20px; right: 20px; opacity: 0.1;">
+                <i class="fas fa-search-location" style="font-size: 8rem;"></i>
+            </div>
+        </section>
+
+        <!-- Stats Overview -->
+        <section>
+            <h2 class="section-title">Your Report Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card lost">
+                    <div class="stat-header">
+                        <div>
+                            <p class="stat-label">Lost Items</p>
+                            <h3 class="stat-number" id="lostCount">0</h3>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>2 from last week</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card found">
+                    <div class="stat-header">
+                        <div>
+                            <p class="stat-label">Found Items</p>
+                            <h3 class="stat-number" id="foundCount">0</h3>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>5 from last week</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card resolved">
+                    <div class="stat-header">
+                        <div>
+                            <p class="stat-label">Resolved Cases</p>
+                            <h3 class="stat-number" id="resolvedCount">0</h3>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>3 from last week</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title">Recent Activity</h2>
+                <a href="#" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    View All <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
+                </a>
+            </div>
+            
+            <div class="activity-grid" id="recentActivity">
+                <!-- Activity items will be dynamically inserted here -->
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No recent activity</h3>
+                    <p>Your recent lost and found reports will appear here.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="../../js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication status
+            checkAuthStatus();
+            
+            // Get current user from localStorage
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            // Set user's name in the welcome banner
+            const userFullName = document.getElementById('userFullName');
+            if (userFullName && currentUser && currentUser.name) {
+                userFullName.textContent = currentUser.name;
+            }
+            
+            // Logout functionality
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    // Clear user session
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('currentUser');
+                    
+                    // Redirect to login page
+                    window.location.href = '../../pages/auth/login.html';
+                });
+            }
+            
+            // Sample data - In a real app, this would come from your backend
+            const userReports = {
+                lost: 5,
+                found: 3,
+                resolved: 2,
+                activities: [
+                    {
+                        id: 1,
+                        type: 'lost',
+                        title: 'Lost Student ID Card',
+                        description: 'Black leather wallet with student ID and some cash. Last seen at the library.',
+                        date: '2023-06-15',
+                        status: 'pending'
+                    },
+                    {
+                        id: 2,
+                        type: 'found',
+                        title: 'Found Laptop Charger',
+                        description: 'Dell laptop charger found in Room 205. Black with green LED light.',
+                        date: '2023-06-14',
+                        status: 'claimed'
+                    },
+                    {
+                        id: 3,
+                        type: 'lost',
+                        title: 'Lost Water Bottle',
+                        description: 'Blue Hydro Flask with stickers. Lost near the cafeteria.',
+                        date: '2023-06-12',
+                        status: 'pending'
+                    }
+                ]
+            };
+            
+            // Update stats
+            document.getElementById('lostCount').textContent = userReports.lost;
+            document.getElementById('foundCount').textContent = userReports.found;
+            document.getElementById('resolvedCount').textContent = userReports.resolved;
+            
+            // Render recent activities
+            const activityContainer = document.getElementById('recentActivity');
+            
+            if (userReports.activities.length > 0) {
+                activityContainer.innerHTML = ''; // Clear the empty state
+                
+                userReports.activities.forEach(activity => {
+                    const activityElement = document.createElement('div');
+                    activityElement.className = `activity-card ${activity.type} animate-fade-in`;
+                    activityElement.innerHTML = `
+                        <div class="activity-header">
+                            <h3 class="activity-title">${activity.title}</h3>
+                            <span class="activity-type ${activity.type}">${activity.type}</span>
+                        </div>
+                        <p class="activity-desc">${activity.description}</p>
+                        <div class="activity-meta">
+                            <div class="activity-date">
+                                <i class="far fa-calendar-alt"></i>
+                                <span>${new Date(activity.date).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'short', 
+                                    day: 'numeric' 
+                                })}</span>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="btn-action">
+                                    <i class="far fa-eye"></i> View
+                                </button>
+                                <button class="btn-action delete">
+                                    <i class="far fa-trash-alt"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    activityContainer.appendChild(activityElement);
+                });
+            }
+            
+            // Add animation to stats cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+    </script>
+</body>
+</html>
