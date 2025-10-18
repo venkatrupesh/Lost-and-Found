@@ -7,6 +7,7 @@ import re
 from difflib import SequenceMatcher
 import random
 import hashlib
+from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -212,9 +213,20 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     
-    # Create reports table
+    # Create users table
     conn.execute('''
-        CREATE TABLE IF NOT EXISTS reports (
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            phone TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Create reports table
+    conn.execute('''CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL,
@@ -552,6 +564,62 @@ def check_reward_given():
     conn.close()
     
     return jsonify({'already_given': existing_reward > 0})
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user['password'], password):
+            session['google_authenticated'] = True
+            session['user_email'] = user['email']
+            session['user_name'] = user['name']
+            session['user_picture'] = ''
+            flash(f'Successfully logged in as {user["name"]}', 'success')
+            return redirect(url_for('user_dashboard'))
+        else:
+            flash('Invalid email or password', 'danger')
+    
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        phone = request.form.get('phone', '')
+        
+        # Validate email domain
+        if not (email.endswith('@klu.ac.in') or email.endswith('@gmail.com')):
+            flash('Only @klu.ac.in and @gmail.com emails are allowed', 'danger')
+            return render_template('signup.html')
+        
+        conn = get_db_connection()
+        
+        # Check if user exists
+        existing_user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        if existing_user:
+            flash('Email already registered', 'danger')
+            conn.close()
+            return render_template('signup.html')
+        
+        # Create user
+        hashed_password = generate_password_hash(password)
+        conn.execute('INSERT INTO users (name, email, password, phone) VALUES (?, ?, ?, ?)',
+                    (name, email, hashed_password, phone))
+        conn.commit()
+        conn.close()
+        
+        flash('Account created successfully! Please login.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('signup.html')
 
 @app.route('/admin_dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
