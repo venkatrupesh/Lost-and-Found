@@ -53,10 +53,19 @@
             <i class="fas fa-exclamation-circle"></i>
             Urgent Items
         </button>
-        <button onclick="findAIMatches()" class="btn btn-ai">
-            <i class="fas fa-robot"></i>
-            AI Matching
+        <button onclick="findImageMatches()" class="btn btn-ai">
+            <i class="fas fa-camera"></i>
+            Image Matching
         </button>
+        <button onclick="showImageScanModal()" class="btn btn-scan">
+            <i class="fas fa-camera"></i>
+            Image Scanner
+        </button>
+        <button onclick="findIdentificationMatches()" class="btn" style="background: linear-gradient(135deg, #8B5CF6, #A855F7); color: white;">
+            <i class="fas fa-fingerprint"></i>
+            ID Matching
+        </button>
+
         <a href="/clear_all_data" onclick="return confirm('Are you sure? This will delete ALL data!')" class="btn" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white;">
             <i class="fas fa-trash"></i>
             Clear All Data
@@ -88,6 +97,39 @@
     </div>
 </div>
 
+
+
+
+<!-- Image Scan Modal -->
+<div id="imageScanModal" class="scan-modal" style="display: none;">
+    <div class="scan-modal-content">
+        <div class="scan-modal-header">
+            <h3><i class="fas fa-camera"></i> AI Image Scanner</h3>
+            <button onclick="closeImageScanModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="scan-modal-body">
+            <div class="scan-form">
+                <div class="form-group">
+                    <label for="lostItemSelect">Select Lost Item:</label>
+                    <select id="lostItemSelect" class="scan-select">
+                        <option value="">Choose lost item...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="foundItemSelect">Select Found Item:</label>
+                    <select id="foundItemSelect" class="scan-select">
+                        <option value="">Choose found item...</option>
+                    </select>
+                </div>
+                <button onclick="performImageScan()" class="btn btn-scan-action">
+                    <i class="fas fa-search"></i>
+                    Scan Images
+                </button>
+            </div>
+            <div id="scanResults" class="scan-results" style="display: none;"></div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 
@@ -125,6 +167,155 @@
     box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
     color: white;
     text-decoration: none;
+}
+
+.btn-scan {
+    background: linear-gradient(135deg, #06B6D4, #0891B2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.btn-scan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+
+
+/* Image Scan Modal */
+.scan-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scan-modal-content {
+    background: rgba(245, 245, 244, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid rgba(214, 211, 209, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.scan-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    border-bottom: 1px solid rgba(214, 211, 209, 0.3);
+}
+
+.scan-modal-header h3 {
+    margin: 0;
+    color: #78716C;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #78716C;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(120, 113, 108, 0.1);
+}
+
+.scan-modal-body {
+    padding: 2rem;
+}
+
+.scan-form {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #57534E;
+    font-weight: 600;
+}
+
+.scan-select {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid rgba(214, 211, 209, 0.4);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    color: #57534E;
+}
+
+.btn-scan-action {
+    background: linear-gradient(135deg, #06B6D4, #0891B2);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.btn-scan-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+}
+
+.scan-results {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(214, 211, 209, 0.3);
+}
+
+.scan-percentage {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.scan-details {
+    margin-top: 1rem;
+}
+
+.scan-point {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(214, 211, 209, 0.2);
 }
 
 /* Stats Cards */
@@ -324,5 +515,383 @@ const urgentStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = urgentStyles;
 document.head.appendChild(styleSheet);
+
+// Image Scanner Functions
+function showImageScanModal() {
+    loadItemsForScanning();
+    document.getElementById('imageScanModal').style.display = 'flex';
+}
+
+function closeImageScanModal() {
+    document.getElementById('imageScanModal').style.display = 'none';
+    document.getElementById('scanResults').style.display = 'none';
+}
+
+function loadItemsForScanning() {
+    fetch('/admin_reports')
+        .then(response => response.json())
+        .then(data => {
+            const lostSelect = document.getElementById('lostItemSelect');
+            const foundSelect = document.getElementById('foundItemSelect');
+            
+            // Clear existing options
+            lostSelect.innerHTML = '<option value="">Choose lost item...</option>';
+            foundSelect.innerHTML = '<option value="">Choose found item...</option>';
+            
+            // Filter items with images
+            const lostItems = data.filter(item => item.type === 'lost' && item.image_filename);
+            const foundItems = data.filter(item => item.type === 'found' && item.image_filename);
+            
+            // Populate lost items
+            lostItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.item_name} - ${item.name} (${new Date(item.date_reported).toLocaleDateString()})`;
+                lostSelect.appendChild(option);
+            });
+            
+            // Populate found items
+            foundItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.item_name} - ${item.name} (${new Date(item.date_reported).toLocaleDateString()})`;
+                foundSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading items:', error);
+        });
+}
+
+function performImageScan() {
+    const lostId = document.getElementById('lostItemSelect').value;
+    const foundId = document.getElementById('foundItemSelect').value;
+    
+    if (!lostId || !foundId) {
+        alert('Please select both lost and found items');
+        return;
+    }
+    
+    const scanResults = document.getElementById('scanResults');
+    scanResults.innerHTML = '<div class="royal-loading">Scanning images...</div>';
+    scanResults.style.display = 'block';
+    
+    fetch('/scan_images', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            lost_id: lostId,
+            found_id: foundId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayScanResults(data);
+    })
+    .catch(error => {
+        console.error('Scan error:', error);
+        scanResults.innerHTML = '<div class="error">Scan failed. Please try again.</div>';
+    });
+}
+
+function displayScanResults(data) {
+    const scanResults = document.getElementById('scanResults');
+    
+    if (!data.success) {
+        scanResults.innerHTML = `<div class="error">${data.message}</div>`;
+        return;
+    }
+    
+    const result = data.scan_result;
+    if (!result) {
+        scanResults.innerHTML = '<div class="error">No scan result received</div>';
+        return;
+    }
+    
+    const percentageColor = getPercentageColor(result.overall_percentage || 0);
+    
+    let html = `
+        <div class="scan-percentage" style="color: ${percentageColor};">
+            ${result.overall_percentage}% Match
+        </div>
+        <div class="scan-summary">
+            <p><strong>Match Level:</strong> ${result.match_level}</p>
+            <p><strong>Confidence:</strong> ${result.confidence}</p>
+            <p><strong>Recommendation:</strong> ${result.recommendation}</p>
+        </div>
+        <div class="scan-details">
+            <h4>Analysis Points:</h4>
+    `;
+    
+    if (result.scan_points && result.scan_points.length > 0) {
+        result.scan_points.forEach(point => {
+            html += `<div class="scan-point">${point}</div>`;
+        });
+    } else {
+        html += '<div class="scan-point">No detailed analysis points available</div>';
+    }
+    
+    html += `
+        </div>
+        <div class="scan-technical">
+            <h4>Technical Details:</h4>
+    `;
+    
+    // Handle different analysis types
+    if (result.analysis_details.xerox_scan_analysis) {
+        html += `
+            <p><strong>Histogram Similarity:</strong> ${result.analysis_details.xerox_scan_analysis.histogram_similarity}%</p>
+            <p><strong>Color Accuracy:</strong> ${result.analysis_details.xerox_scan_analysis.color_accuracy}%</p>
+            <p><strong>Structural Match:</strong> ${result.analysis_details.xerox_scan_analysis.structural_match}%</p>
+            <p><strong>Pattern Recognition:</strong> ${result.analysis_details.xerox_scan_analysis.pattern_recognition}%</p>
+            <p><strong>Layout Analysis:</strong> ${result.analysis_details.xerox_scan_analysis.layout_analysis}%</p>
+            <p><strong>Texture Analysis:</strong> ${result.analysis_details.xerox_scan_analysis.texture_analysis}%</p>
+        `;
+    } else if (result.analysis_details.computer_vision) {
+        html += `
+            <p><strong>Histogram Similarity:</strong> ${result.analysis_details.computer_vision.histogram_similarity}%</p>
+            <p><strong>Color Analysis:</strong> ${result.analysis_details.computer_vision.color_analysis}%</p>
+            <p><strong>Brightness Match:</strong> ${result.analysis_details.computer_vision.brightness_match}%</p>
+        `;
+    } else if (result.analysis_details.basic_analysis) {
+        html += `
+            <p><strong>File Analysis:</strong> ${result.analysis_details.basic_analysis.file_size_similarity}%</p>
+            <p><strong>Hash Match:</strong> ${result.analysis_details.basic_analysis.file_hash_match ? 'Yes' : 'No'}</p>
+        `;
+    }
+    
+    html += `
+            <p><strong>Color Fidelity:</strong> ${result.analysis_details.detailed_assessment?.color_fidelity || result.analysis_details.visual_analysis?.color_match || 'N/A'}</p>
+            <p><strong>Structure Match:</strong> ${result.analysis_details.detailed_assessment?.structural_integrity || result.analysis_details.visual_analysis?.structure_match || 'N/A'}</p>
+            <p><strong>Technique:</strong> ${result.analysis_details.scan_metadata?.scan_technique || result.analysis_details.metadata?.technique || 'N/A'}</p>
+        </div>
+    `;
+    
+    scanResults.innerHTML = html;
+}
+
+function getPercentageColor(percentage) {
+    if (percentage >= 80) return '#22C55E';
+    if (percentage >= 60) return '#F59E0B';
+    if (percentage >= 40) return '#F97316';
+    return '#EF4444';
+}
+
+function findImageMatches() {
+    const container = document.getElementById('matches-container');
+    container.innerHTML = '<div class="royal-loading">Scanning images for matches...</div>';
+    
+    fetch('/ai_find_matches')
+        .then(response => response.json())
+        .then(data => {
+            displayImageMatches(data);
+        })
+        .catch(error => {
+            console.error('Error finding image matches:', error);
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-camera"></i><h3>No Image Matches Found</h3><p>Items must have images uploaded for matching</p></div>';
+        });
+}
+
+function displayImageMatches(matches) {
+    const container = document.getElementById('matches-container');
+    
+    if (matches.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-camera"></i>
+                <h3>No Image Matches Found</h3>
+                <p>No items with matching images found. Both items must have images uploaded.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div class="matches-header"><h3><i class="fas fa-camera"></i> Image-Based Matches (Xerox Analysis)</h3></div>';
+    
+    matches.forEach(match => {
+        const matchColor = match.similarity >= 0.8 ? '#22C55E' : match.similarity >= 0.6 ? '#F59E0B' : '#F97316';
+        const percentage = (match.similarity * 100).toFixed(1);
+        
+        html += `
+            <div class="match-card" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border-left: 5px solid ${matchColor};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="margin: 0; color: #1E293B;">${match.match_score}</h4>
+                        <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.875rem;"><i class="fas fa-camera"></i> Image Analysis • ${match.urgency} Priority</p>
+                    </div>
+                    <button onclick="sendMatchNotification('${match.lost.id}', '${match.found.id}')" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        <i class="fas fa-bell"></i> Notify Owner
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Lost Item -->
+                    <div>
+                        <h5 style="color: #EF4444; margin-bottom: 1rem;"><i class="fas fa-exclamation-triangle"></i> LOST ITEM</h5>
+                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                            <img src="/static/uploads/${match.lost.image_filename}" alt="Lost item" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="showImageModal('/static/uploads/${match.lost.image_filename}')" />
+                            <div style="flex: 1;">
+                                <p style="margin: 0.25rem 0; color: #1E293B;"><strong>${match.lost.item_name}</strong></p>
+                                <p style="margin: 0.25rem 0; color: #374151; font-size: 0.875rem;">${match.lost.description}</p>
+                                <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Reporter:</strong> ${match.lost.name}</p>
+                                <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Location:</strong> ${match.lost.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Found Item -->
+                    <div>
+                        <h5 style="color: #22C55E; margin-bottom: 1rem;"><i class="fas fa-search"></i> FOUND ITEM</h5>
+                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                            <img src="/static/uploads/${match.found.image_filename}" alt="Found item" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="showImageModal('/static/uploads/${match.found.image_filename}')" />
+                            <div style="flex: 1;">
+                                <p style="margin: 0.25rem 0; color: #1E293B;"><strong>${match.found.item_name}</strong></p>
+                                <p style="margin: 0.25rem 0; color: #374151; font-size: 0.875rem;">${match.found.description}</p>
+                                <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Finder:</strong> ${match.found.name}</p>
+                                <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Location:</strong> ${match.found.location}</p>
+                                <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.875rem;"><i class="fas fa-camera"></i> ${percentage}% Match</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function findIdentificationMatches() {
+    const container = document.getElementById('matches-container');
+    container.innerHTML = '<div class="royal-loading">Analyzing identification details...</div>';
+    
+    fetch('/find_identification_matches')
+        .then(response => response.json())
+        .then(data => {
+            displayIdentificationMatches(data);
+        })
+        .catch(error => {
+            console.error('Error finding ID matches:', error);
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-fingerprint"></i><h3>No ID Matches Found</h3><p>Items must have identification details for matching</p></div>';
+        });
+}
+
+function displayIdentificationMatches(matches) {
+    const container = document.getElementById('matches-container');
+    
+    if (matches.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-fingerprint"></i>
+                <h3>No Identification Matches Found</h3>
+                <p>No items with matching identification details found.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div class="matches-header" style="background: linear-gradient(135deg, #8B5CF6, #A855F7);"><h3><i class="fas fa-fingerprint"></i> Identification-Based Matches</h3></div>';
+    
+    matches.forEach(match => {
+        const matchColor = match.similarity >= 0.7 ? '#22C55E' : match.similarity >= 0.5 ? '#F59E0B' : '#F97316';
+        const percentage = (match.similarity * 100).toFixed(1);
+        
+        // Extract identification details
+        const lostId = extractIdentificationDetails(match.lost.description);
+        const foundId = extractIdentificationDetails(match.found.description);
+        
+        html += `
+            <div class="match-card" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border-radius: 12px; padding: 1.5rem; margin: 1rem 0; border-left: 5px solid ${matchColor};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="margin: 0; color: #1E293B;">${match.match_score}</h4>
+                        <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.875rem;"><i class="fas fa-fingerprint"></i> ID Analysis • ${match.urgency} Priority</p>
+                        <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;">ID Match: ${match.identification_match.toFixed(1)}% | Item Match: ${match.item_match.toFixed(1)}%</p>
+                    </div>
+                    <button onclick="sendMatchNotification('${match.lost.id}', '${match.found.id}')" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        <i class="fas fa-bell"></i> Notify Owner
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Lost Item -->
+                    <div>
+                        <h5 style="color: #EF4444; margin-bottom: 1rem;"><i class="fas fa-exclamation-triangle"></i> LOST ITEM</h5>
+                        <div>
+                            <p style="margin: 0.25rem 0; color: #1E293B;"><strong>${match.lost.item_name}</strong></p>
+                            <p style="margin: 0.25rem 0; color: #374151; font-size: 0.875rem;">${match.lost.description.split('| IDENTIFICATION:')[0]}</p>
+                            <div style="background: rgba(239, 68, 68, 0.1); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">
+                                <p style="margin: 0; color: #DC2626; font-size: 0.875rem; font-weight: 600;"><i class="fas fa-fingerprint"></i> Owner's ID Details:</p>
+                                <p style="margin: 0.25rem 0; color: #7F1D1D; font-size: 0.8rem;">${lostId}</p>
+                            </div>
+                            <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Reporter:</strong> ${match.lost.name}</p>
+                            <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Location:</strong> ${match.lost.location}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Found Item -->
+                    <div>
+                        <h5 style="color: #22C55E; margin-bottom: 1rem;"><i class="fas fa-search"></i> FOUND ITEM</h5>
+                        <div>
+                            <p style="margin: 0.25rem 0; color: #1E293B;"><strong>${match.found.item_name}</strong></p>
+                            <p style="margin: 0.25rem 0; color: #374151; font-size: 0.875rem;">${match.found.description.split('| IDENTIFICATION:')[0]}</p>
+                            <div style="background: rgba(34, 197, 94, 0.1); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">
+                                <p style="margin: 0; color: #059669; font-size: 0.875rem; font-weight: 600;"><i class="fas fa-fingerprint"></i> Found Item ID Details:</p>
+                                <p style="margin: 0.25rem 0; color: #064E3B; font-size: 0.8rem;">${foundId}</p>
+                            </div>
+                            <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Finder:</strong> ${match.found.name}</p>
+                            <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.75rem;"><strong>Location:</strong> ${match.found.location}</p>
+                            <p style="margin: 0.25rem 0; color: #6B7280; font-size: 0.875rem;"><i class="fas fa-fingerprint"></i> ${percentage}% Match</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function extractIdentificationDetails(description) {
+    if (description.includes('| IDENTIFICATION:')) {
+        return description.split('| IDENTIFICATION:')[1].trim();
+    }
+    return 'No identification details';
+}
+
+function sendMatchNotification(lostId, foundId) {
+    if (!lostId || !foundId) {
+        alert('Invalid item IDs');
+        return;
+    }
+    
+    fetch('/send_match_notification', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            lost_id: lostId,
+            found_id: foundId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Notification sent successfully to the item owner!');
+        } else {
+            alert('Failed to send notification: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error sending notification:', error);
+        alert('Error sending notification. Please try again.');
+    });
+}
+
+
+
 </script>
 {% endblock %}

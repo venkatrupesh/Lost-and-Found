@@ -6,67 +6,121 @@
     <title>Lost & Found System - Reuniting People with Their Belongings</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+    <!-- 3D Background Canvas -->
+    <canvas id="threejs-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-search"></i>
+                <span>Lost & Found</span>
+            </div>
+            {% if session.google_authenticated %}
+            <div class="nav-links">
+                <a href="{{ url_for('user_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('google_auth.logout') }}" class="nav-link">Logout</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+    
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">Lost & Found System</h1>
-                <p class="hero-subtitle">Helping reunite people with their belongings through smart technology and community care</p>
-                
-                <!-- Dashboard Cards -->
-                <div class="dashboard-grid">
-                    <div class="glass-card user-card">
-                        <div class="card-icon">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <h3>User Dashboard</h3>
-                        <p>Report lost or found items and track your submissions</p>
-                        {% if session.google_authenticated %}
-                            <a href="{{ url_for('user_dashboard') }}" class="btn-primary">
-                                <i class="fas fa-tachometer-alt"></i>
-                                Enter Dashboard
-                            </a>
-                            <p class="user-welcome">Welcome back, {{ session.user_name }}!</p>
-                            <a href="{{ url_for('google_auth.logout') }}" class="btn-logout">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </a>
-                        {% else %}
-                            <div class="auth-buttons">
-                                <a href="{{ url_for('login') }}" class="btn-primary">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                    Login
-                                </a>
-                                <a href="{{ url_for('signup') }}" class="btn-success">
-                                    <i class="fas fa-user-plus"></i>
-                                    Sign Up
-                                </a>
-                                <a href="{{ url_for('google_auth.google_login') }}" class="btn-google">
-                                    <svg class="google-logo" width="20" height="20" viewBox="0 0 24 24">
-                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                                    </svg>
-                                    Google Sign-in
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
+                <div class="hero-text">
+                    <h1 class="hero-title">Never Lose Anything Again</h1>
+                    <p class="hero-subtitle">Advanced AI-powered lost and found system that reunites people with their belongings through smart matching and community collaboration</p>
                     
-                    <div class="glass-card admin-card">
-                        <div class="card-icon">
-                            <i class="fas fa-shield-alt"></i>
+                    {% if session.google_authenticated %}
+                        <div class="hero-actions">
+                            <a href="{{ url_for('user_dashboard') }}" class="btn-primary-large">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Go to Dashboard
+                            </a>
+                            <p class="welcome-text">Welcome back, {{ session.user_name }}!</p>
                         </div>
-                        <h3>Admin Dashboard</h3>
-                        <p>Manage reports, find matches, and oversee the platform</p>
-                        <a href="{{ url_for('admin_dashboard') }}" class="btn-admin">
-                            <i class="fas fa-cog"></i>
-                            Admin Access
+                    {% else %}
+                        <div class="hero-actions">
+                            <a href="{{ url_for('signup') }}" class="btn-primary-large">
+                                <i class="fas fa-rocket"></i>
+                                Get Started Free
+                            </a>
+                            <a href="{{ url_for('login') }}" class="btn-secondary-large">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Sign In
+                            </a>
+                        </div>
+                        
+                        <div class="auth-divider">
+                            <span>or continue with</span>
+                        </div>
+                        
+                        <a href="{{ url_for('google_auth.google_login') }}" class="btn-google-large">
+                            <svg class="google-logo" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            Continue with Google
                         </a>
+                        
+                        <div class="admin-access">
+                            <a href="{{ url_for('admin_dashboard') }}" class="admin-link-small">
+                                <i class="fas fa-shield-alt"></i>
+                                Admin Access
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="feature-preview">
+                        <div class="preview-card">
+                            <i class="fas fa-search-plus"></i>
+                            <h4>AI Matching</h4>
+                            <p>Smart algorithms find your items</p>
+                        </div>
+                        <div class="preview-card">
+                            <i class="fas fa-bell"></i>
+                            <h4>Instant Alerts</h4>
+                            <p>Get notified when matches are found</p>
+                        </div>
+                        <div class="preview-card">
+                            <i class="fas fa-shield-check"></i>
+                            <h4>Secure Platform</h4>
+                            <p>Your data is safe and protected</p>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Items Reunited</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2.3h</div>
+                    <div class="stat-label">Avg Response Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Active Users</div>
                 </div>
             </div>
         </div>
@@ -145,6 +199,18 @@
             min-height: 100vh;
             color: #1C1917;
             line-height: 1.6;
+            position: relative;
+        }
+        
+        #threejs-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.8;
+            pointer-events: none;
         }
 
         .container {
@@ -152,11 +218,149 @@
             margin: 0 auto;
             padding: 0 2rem;
         }
+        
+        /* Navigation */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(245, 245, 244, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(214, 211, 209, 0.3);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #78716C;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #57534E;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(120, 113, 108, 0.1);
+            color: #78716C;
+        }
+        
+        .admin-link {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white !important;
+        }
+        
+        .admin-link:hover {
+            background: linear-gradient(135deg, #7C3AED, #9333EA);
+            transform: translateY(-1px);
+        }
 
         /* Hero Section */
         .hero {
-            padding: 4rem 0 6rem;
-            text-align: center;
+            padding: 8rem 0 6rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-text {
+            text-align: left;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .hero-title {
@@ -166,24 +370,225 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            animation: slideInLeft 1.2s ease-out 0.3s both;
         }
 
         .hero-subtitle {
             font-size: 1.25rem;
             color: #64748B;
             margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            line-height: 1.6;
+            animation: slideInRight 1.2s ease-out 0.6s both;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+        
+        .btn-primary-large {
+            background: linear-gradient(135deg, #78716C, #57534E);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(120, 113, 108, 0.3);
+        }
+        
+        .btn-primary-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(120, 113, 108, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-secondary-large {
+            background: transparent;
+            color: #78716C;
+            padding: 1rem 2rem;
+            border: 2px solid #78716C;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-large:hover {
+            background: #78716C;
+            color: white;
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+        
+        .btn-google-large {
+            background: #ffffff;
+            color: #3c4043;
+            padding: 1rem 2rem;
+            border: 2px solid #f1f3f4;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+        
+        .btn-google-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            color: #3c4043;
+            text-decoration: none;
+            background: #f8f9fa;
+        }
+        
+        .welcome-text {
+            color: #22C55E;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .auth-divider {
+            text-align: center;
+            margin: 2rem 0 1rem;
+            position: relative;
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+        
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(214, 211, 209, 0.3);
+        }
+        
+        .auth-divider span {
+            background: linear-gradient(135deg, #F5F5F4 0%, #E7E5E4 50%, #D6D3D1 100%);
+            padding: 0 1rem;
+        }
+        
+        .admin-access {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .admin-link-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+        
+        .admin-link-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+            color: white;
+            text-decoration: none;
         }
 
-        /* Dashboard Grid */
-        .dashboard-grid {
+        /* Hero Visual */
+        .hero-visual {
+            animation: scaleIn 1s ease-out 1.2s both;
+        }
+        
+        .feature-preview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .preview-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(214, 211, 209, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-card i {
+            font-size: 2.5rem;
+            color: #78716C;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-card h4 {
+            color: #57534E;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .preview-card p {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            padding: 4rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #78716C;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #64748B;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
         }
 
         /* Glass Cards */
@@ -202,6 +607,14 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
+        
+        .glass-card:nth-child(1) {
+            animation: scaleIn 0.8s ease-out 1.2s both;
+        }
+        
+        .glass-card:nth-child(2) {
+            animation: scaleIn 0.8s ease-out 1.4s both;
+        }
 
         .card-icon {
             font-size: 3rem;
@@ -210,6 +623,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: bounceIn 0.8s ease-out 1.6s both;
         }
 
         .glass-card h3 {
@@ -355,6 +769,14 @@
             padding: 4rem 0;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .how-it-works.animate {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .section-title {
@@ -384,6 +806,30 @@
         .step-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .step-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .step-card.animate:nth-child(1) {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.2s;
+        }
+        
+        .step-card.animate:nth-child(2) {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.4s;
+        }
+        
+        .step-card.animate:nth-child(3) {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.6s;
         }
 
         .step-icon {
@@ -424,6 +870,7 @@
         /* Features Section */
         .features {
             padding: 4rem 0;
+            animation: fadeInUp 1s ease-out;
         }
 
         .features-grid {
@@ -460,6 +907,29 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .hero {
+                padding: 6rem 0 4rem;
+            }
+            
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+            
+            .hero-text {
+                text-align: center;
+            }
+
             .hero-title {
                 font-size: 2.5rem;
             }
@@ -467,13 +937,26 @@
             .hero-subtitle {
                 font-size: 1.125rem;
             }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
             }
-
-            .glass-card {
-                padding: 2rem;
+            
+            .btn-primary-large,
+            .btn-secondary-large,
+            .btn-google-large {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
             }
 
             .container {
@@ -481,5 +964,363 @@
             }
         }
     </style>
+    
+    <script>
+        // Three.js 3D Animation
+        let scene, camera, renderer, particles;
+        
+        function initThreeJS() {
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('threejs-canvas'),
+                alpha: true,
+                antialias: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            
+            // Create floating particles
+            createFloatingParticles();
+            
+            // Position camera
+            camera.position.z = 5;
+            
+            // Start animation
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+        
+        function createFloatingParticles() {
+            // Create dynamic particle network
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 80;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            // Professional color palette
+            const cementColors = [
+                new THREE.Color(0x78716C),
+                new THREE.Color(0x57534E),
+                new THREE.Color(0xA8A29E),
+                new THREE.Color(0xD6D3D1)
+            ];
+            
+            for (let i = 0; i < particleCount; i++) {
+                // Distributed positioning
+                positions[i * 3] = (Math.random() - 0.5) * 40;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+                
+                // Color variation
+                const color = cementColors[Math.floor(Math.random() * cementColors.length)];
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.08,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            // Add modern geometric elements
+            createModernShapes();
+        }
+        
+        function createModernShapes() {
+            // Create floating geometric network
+            const nodes = [];
+            const connections = [];
+            
+            // Create network nodes
+            for (let i = 0; i < 12; i++) {
+                const nodeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+                const nodeMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x78716C,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                
+                const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+                node.position.set(
+                    (Math.random() - 0.5) * 25,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 15
+                );
+                
+                node.userData = {
+                    originalPosition: node.position.clone(),
+                    floatSpeed: Math.random() * 0.02 + 0.01
+                };
+                
+                nodes.push(node);
+                scene.add(node);
+            }
+            
+            // Create connections between nearby nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const distance = nodes[i].position.distanceTo(nodes[j].position);
+                    if (distance < 8) {
+                        const lineGeometry = new THREE.BufferGeometry();
+                        const positions = [
+                            nodes[i].position.x, nodes[i].position.y, nodes[i].position.z,
+                            nodes[j].position.x, nodes[j].position.y, nodes[j].position.z
+                        ];
+                        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                        
+                        const lineMaterial = new THREE.LineBasicMaterial({
+                            color: 0x57534E,
+                            transparent: true,
+                            opacity: 0.2
+                        });
+                        
+                        const line = new THREE.Line(lineGeometry, lineMaterial);
+                        connections.push(line);
+                        scene.add(line);
+                    }
+                }
+            }
+            
+            // Add floating tech elements
+            createTechElements();
+            
+            // Store references for animation
+            scene.userData.nodes = nodes;
+            scene.userData.connections = connections;
+        }
+        
+        function createTechElements() {
+            // Floating hexagons
+            for (let i = 0; i < 6; i++) {
+                const hexGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 6);
+                const hexMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xA8A29E,
+                    transparent: true,
+                    opacity: 0.3,
+                    wireframe: true
+                });
+                
+                const hex = new THREE.Mesh(hexGeometry, hexMaterial);
+                hex.position.set(
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 25,
+                    (Math.random() - 0.5) * 10
+                );
+                
+                hex.rotation.x = Math.random() * Math.PI;
+                hex.rotation.z = Math.random() * Math.PI;
+                
+                hex.userData = {
+                    rotationSpeed: {
+                        x: (Math.random() - 0.5) * 0.01,
+                        y: (Math.random() - 0.5) * 0.01,
+                        z: (Math.random() - 0.5) * 0.01
+                    },
+                    floatAmplitude: Math.random() * 0.5 + 0.2
+                };
+                
+                scene.add(hex);
+            }
+            
+            // Orbiting rings
+            for (let i = 0; i < 4; i++) {
+                const ringGeometry = new THREE.TorusGeometry(1, 0.1, 8, 16);
+                const ringMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xD6D3D1,
+                    transparent: true,
+                    opacity: 0.4,
+                    wireframe: true
+                });
+                
+                const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                ring.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 15,
+                    (Math.random() - 0.5) * 8
+                );
+                
+                ring.userData = {
+                    orbitRadius: Math.random() * 2 + 1,
+                    orbitSpeed: (Math.random() - 0.5) * 0.02,
+                    rotationSpeed: Math.random() * 0.01 + 0.005
+                };
+                
+                scene.add(ring);
+            }
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            
+            // Animate particle system
+            if (particles) {
+                particles.rotation.y += 0.002;
+                particles.position.y = Math.sin(time * 0.5) * 0.2;
+                
+                // Pulse effect
+                const positions = particles.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time + positions[i] * 0.1) * 0.01;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+            
+            // Animate network nodes
+            if (scene.userData.nodes) {
+                scene.userData.nodes.forEach((node, index) => {
+                    const originalPos = node.userData.originalPosition;
+                    const floatSpeed = node.userData.floatSpeed;
+                    
+                    node.position.y = originalPos.y + Math.sin(time * floatSpeed + index) * 0.5;
+                    node.position.x = originalPos.x + Math.cos(time * floatSpeed * 0.7 + index) * 0.3;
+                });
+            }
+            
+            // Animate all geometric elements
+            scene.traverse((object) => {
+                if (object.userData) {
+                    // Rotation animations
+                    if (object.userData.rotationSpeed) {
+                        if (object.userData.rotationSpeed.x) object.rotation.x += object.userData.rotationSpeed.x;
+                        if (object.userData.rotationSpeed.y) object.rotation.y += object.userData.rotationSpeed.y;
+                        if (object.userData.rotationSpeed.z) object.rotation.z += object.userData.rotationSpeed.z;
+                    }
+                    
+                    // Floating animations
+                    if (object.userData.floatAmplitude) {
+                        object.position.y += Math.sin(time + object.position.x * 0.1) * object.userData.floatAmplitude * 0.01;
+                    }
+                    
+                    // Orbital animations
+                    if (object.userData.orbitRadius) {
+                        const orbitTime = time * object.userData.orbitSpeed;
+                        object.position.x += Math.cos(orbitTime) * object.userData.orbitRadius * 0.01;
+                        object.position.z += Math.sin(orbitTime) * object.userData.orbitRadius * 0.01;
+                        object.rotation.y += object.userData.rotationSpeed;
+                    }
+                }
+            });
+            
+            // Subtle camera movement for depth
+            camera.position.x = Math.sin(time * 0.1) * 0.5;
+            camera.position.y = Math.cos(time * 0.15) * 0.3;
+            camera.lookAt(scene.position);
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Scroll Animation Observer
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (entry.target.classList.contains('how-it-works')) {
+                            entry.target.classList.add('animate');
+                            
+                            // Animate step cards with delay
+                            const stepCards = entry.target.querySelectorAll('.step-card');
+                            stepCards.forEach(card => {
+                                card.classList.add('animate');
+                            });
+                        }
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe sections
+            const howItWorksSection = document.querySelector('.how-it-works');
+            if (howItWorksSection) {
+                observer.observe(howItWorksSection);
+            }
+        }
+        
+        // Mouse interaction
+        let mouseX = 0, mouseY = 0;
+        
+        function onMouseMove(event) {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+        
+        function addInteractivity() {
+            window.addEventListener('mousemove', onMouseMove);
+            
+            // Add mouse influence to camera
+            const originalAnimate = animate;
+            animate = function() {
+                // Mouse parallax effect
+                if (camera) {
+                    camera.position.x += (mouseX * 2 - camera.position.x) * 0.02;
+                    camera.position.y += (mouseY * 1 - camera.position.y) * 0.02;
+                    camera.lookAt(scene.position);
+                }
+                
+                // Mouse influence on particles
+                if (particles && scene.userData.nodes) {
+                    scene.userData.nodes.forEach((node, index) => {
+                        const influence = 0.5;
+                        node.position.x += (mouseX * influence - node.position.x * 0.01) * 0.01;
+                        node.position.y += (mouseY * influence - node.position.y * 0.01) * 0.01;
+                    });
+                }
+                
+                originalAnimate();
+            };
+        }
+        
+        // Performance optimization
+        function optimizePerformance() {
+            // Reduce quality on mobile
+            if (window.innerWidth < 768) {
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            } else {
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            }
+            
+            // Pause animation when tab is not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Pause heavy animations
+                } else {
+                    // Resume animations
+                }
+            });
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            initThreeJS();
+            initScrollAnimations();
+            addInteractivity();
+            optimizePerformance();
+        });
+    </script>
 </body>
 </html>

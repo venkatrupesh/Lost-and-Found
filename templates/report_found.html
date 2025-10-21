@@ -58,6 +58,15 @@
             <div class="file-upload-text">Choose a PNG or JPG image to help identify the item</div>
         </div>
         
+        <div class="form-group" data-icon="🔍" id="identification-group" style="display: none;">
+            <label for="specific_identification" data-icon="🔍">Specific Identification Details *</label>
+            <textarea id="specific_identification" name="specific_identification" rows="3" 
+                placeholder="Since no image is uploaded, please provide specific identification details like: serial numbers, unique marks, scratches, stickers, model numbers, or any distinctive features that would help the owner identify their item."></textarea>
+            <div class="identification-note">
+                <strong>⚠️ Required when no image is provided:</strong> Add unique details that would help the owner prove this is their item.
+            </div>
+        </div>
+        
         <button type="submit" class="btn btn-secondary">Submit Found Item Report</button>
     </form>
     
@@ -130,6 +139,16 @@
     text-align: center;
     font-weight: 500;
     color: #1976d2;
+}
+
+.identification-note {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #FFC107;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #F57C00;
 }
 
 @keyframes slideIn {
@@ -227,14 +246,38 @@ function showSimpleSuggestion() {
     panel.style.display = 'block';
 }
 
+// Handle image upload and identification requirement
+function toggleIdentificationField() {
+    const imageInput = document.getElementById('image');
+    const identificationGroup = document.getElementById('identification-group');
+    const identificationField = document.getElementById('specific_identification');
+    
+    if (imageInput.files && imageInput.files.length > 0) {
+        // Image uploaded - hide identification field
+        identificationGroup.style.display = 'none';
+        identificationField.removeAttribute('required');
+    } else {
+        // No image - show identification field
+        identificationGroup.style.display = 'block';
+        identificationField.setAttribute('required', 'required');
+    }
+}
+
 // Add event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     const itemNameField = document.getElementById('item_name');
     const descriptionField = document.getElementById('description');
+    const imageInput = document.getElementById('image');
     
     if (itemNameField && descriptionField) {
         itemNameField.addEventListener('input', checkSmartSuggestions);
         descriptionField.addEventListener('input', checkSmartSuggestions);
+    }
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', toggleIdentificationField);
+        // Show identification field initially since no image is uploaded
+        toggleIdentificationField();
     }
 });
 </script>

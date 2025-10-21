@@ -83,9 +83,10 @@ def google_callback():
     session['user_email'] = email
     session['user_name'] = user_info.get('name', '')
     session['user_picture'] = user_info.get('picture', '')
+    session['show_intro'] = True
     
     flash(f'Successfully signed in as {email}', 'success')
-    return redirect(url_for('user_dashboard'))
+    return redirect(url_for('login_intro'))
 
 @google_auth.route('/logout')
 def logout():

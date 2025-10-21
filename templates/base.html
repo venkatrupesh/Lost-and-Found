@@ -8,6 +8,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Lost & Found Background Animation -->
+    <div class="bg-animation">
+        <div class="floating-items">
+            <div class="item phone"><i class="fas fa-mobile-alt"></i></div>
+            <div class="item wallet"><i class="fas fa-wallet"></i></div>
+            <div class="item keys"><i class="fas fa-key"></i></div>
+            <div class="item bag"><i class="fas fa-shopping-bag"></i></div>
+            <div class="item watch"><i class="fas fa-clock"></i></div>
+            <div class="item laptop"><i class="fas fa-laptop"></i></div>
+            <div class="item glasses"><i class="fas fa-glasses"></i></div>
+            <div class="item camera"><i class="fas fa-camera"></i></div>
+            <div class="item headphones"><i class="fas fa-headphones"></i></div>
+            <div class="item book"><i class="fas fa-book"></i></div>
+            <div class="item umbrella"><i class="fas fa-umbrella"></i></div>
+            <div class="item jewelry"><i class="fas fa-gem"></i></div>
+        </div>
+        <div class="search-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+    </div>
+    
     <!-- Navigation Header -->
     <nav class="navbar">
         <div class="nav-container">
@@ -46,6 +69,8 @@
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
+                {% elif current_page == 'login' or current_page == 'signup' %}
+                    <!-- No navigation on login/signup pages -->
                 {% else %}
                     <!-- Default Navigation -->
                     <a href="{{ url_for('index') }}" class="nav-btn">
@@ -57,16 +82,6 @@
                         <i class="fas fa-user"></i>
                         <span>Dashboard</span>
                     </a>
-                    {% endif %}
-                    <a href="{{ url_for('community') }}" class="nav-btn">
-                        <i class="fas fa-users"></i>
-                        <span>Community</span>
-                    </a>
-                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Admin</span>
-                    </a>
-                    {% if session.google_authenticated %}
                     <a href="{{ url_for('google_auth.logout') }}" class="nav-btn nav-logout">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
@@ -94,6 +109,125 @@
     
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popups.js') }}"></script>
+    
+    <style>
+    /* Lost & Found Background Animation */
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.6;
+        overflow: hidden;
+    }
+    
+    .floating-items {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .item {
+        position: absolute;
+        color: #78716C;
+        font-size: 2rem;
+        animation: float 15s infinite linear;
+    }
+    
+    .item.phone { left: 10%; animation-delay: 0s; }
+    .item.wallet { left: 20%; animation-delay: -2s; }
+    .item.keys { left: 30%; animation-delay: -4s; }
+    .item.bag { left: 40%; animation-delay: -6s; }
+    .item.watch { left: 50%; animation-delay: -8s; }
+    .item.laptop { left: 60%; animation-delay: -10s; }
+    .item.glasses { left: 70%; animation-delay: -12s; }
+    .item.camera { left: 80%; animation-delay: -14s; }
+    .item.headphones { left: 15%; animation-delay: -3s; }
+    .item.book { left: 35%; animation-delay: -7s; }
+    .item.umbrella { left: 55%; animation-delay: -11s; }
+    .item.jewelry { left: 75%; animation-delay: -1s; }
+    
+    @keyframes float {
+        0% {
+            transform: translateY(100vh) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100px) rotate(360deg);
+            opacity: 0;
+        }
+    }
+    
+    .search-waves {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+    }
+    
+    .wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(90deg, transparent, rgba(120, 113, 108, 0.1), transparent);
+        border-radius: 50%;
+        animation: wave 8s infinite ease-in-out;
+    }
+    
+    .wave:nth-child(2) {
+        animation-delay: -2s;
+        background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+    }
+    
+    .wave:nth-child(3) {
+        animation-delay: -4s;
+        background: linear-gradient(90deg, transparent, rgba(214, 211, 209, 0.1), transparent);
+    }
+    
+    @keyframes wave {
+        0%, 100% {
+            transform: translateX(-100%) scaleY(0.5);
+        }
+        50% {
+            transform: translateX(100%) scaleY(1);
+        }
+    }
+    
+    /* Ensure content stays above animation */
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+        background: rgba(245, 245, 244, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(214, 211, 209, 0.3);
+    }
+    
+    /* Add top padding to body to account for fixed navbar */
+    body {
+        padding-top: 70px;
+    }
+    </style>
+    
     {% block scripts %}{% endblock %}
 </body>
 </html>
